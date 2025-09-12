@@ -5,16 +5,27 @@
 *.a
 *.dll
 *.dylib
+*.lib
+*.obj
+*.pdb
 
 # Build directories
 /build/
+/out/
 /CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
+Makefile
+*.cmake
 
 # IDE/Editor specific
 .vscode/
 .idea/
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
 *.swp
 *.swo
 *~

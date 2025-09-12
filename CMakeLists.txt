@@ -24,7 +24,9 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 target_link_libraries(${PROJECT_NAME} raylib)
 
 # --- Platform-specific dependencies ---
-if (UNIX AND NOT APPLE)
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} winmm gdi32)
+elseif (UNIX AND NOT APPLE)
     target_link_libraries(${PROJECT_NAME} pthread m dl GL)
 elseif(APPLE)
     target_link_libraries(${PROJECT_NAME}
