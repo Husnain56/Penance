@@ -1,30 +1,32 @@
 #include "raylib.h"
+#include "character.hpp"
 
-int main()
+int main ()
 {
-    // Initialization
-    const int screenWidth = GetMonitorWidth(0);
-    const int screenHeight = GetMonitorHeight(0);
+  const int screenheight = GetScreenHeight();  
+  const int screenwidth = GetScreenWidth();
+  InitWindow(screenwidth, screenheight, "game");
+  SetTargetFPS(60);
 
-    InitWindow(screenWidth, screenHeight, "My First Raylib Game");
-    SetTargetFPS(60);
+  Vector2 pos = {128.0f, 128.0f};
+  Character lady(pos);
 
-    // Main game loop
-    while (!WindowShouldClose())
-    {
-        // Update
-        // (nothing to update for now)
+  lady.load_texture("run", "resources/yokai/Kitsune/Run.png", 8);
+  lady.load_texture("idle", "resources/yokai/Kitsune/Idle.png", 8);
+  lady.load_texture("attack", "resources/yokai/Kitsune/Attack_3.png", 7);
+  lady.load_texture("jump", "resources/yokai/Kitsune/Jump.png", 10);
 
-        // Draw
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
+  while (!WindowShouldClose())
+  {
+    lady.update();
 
-        DrawText("Hello, Raylib!", 320, 200, 20, DARKGRAY);
+    BeginDrawing();
+    ClearBackground(WHITE);
 
-        EndDrawing();
-    }
+    lady.draw();
 
-    // De-Initialization
-    CloseWindow();
-    return 0;
+    EndDrawing();
+    
+  }
+  return 0;
 }
