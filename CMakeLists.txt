@@ -24,9 +24,7 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 target_link_libraries(${PROJECT_NAME} raylib)
 
 # --- Platform-specific dependencies ---
-if (WIN32)
-    target_link_libraries(${PROJECT_NAME} winmm gdi32)
-elseif (UNIX AND NOT APPLE)
+if (UNIX AND NOT APPLE)
     target_link_libraries(${PROJECT_NAME} pthread m dl GL)
 elseif(APPLE)
     target_link_libraries(${PROJECT_NAME}
@@ -34,4 +32,13 @@ elseif(APPLE)
         "-framework Cocoa"
         "-framework IOKit"
         "-framework CoreVideo")
+endif()
+
+# --- Windows-only: Copy resources folder next to executable ---
+if (WIN32)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/resources
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/resources
+    )
 endif()
