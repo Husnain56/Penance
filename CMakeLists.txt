@@ -33,3 +33,12 @@ elseif(APPLE)
         "-framework IOKit"
         "-framework CoreVideo")
 endif()
+
+# --- Windows-only: Copy resources folder next to executable ---
+if (WIN32)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/resources
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/resources
+    )
+endif()
