@@ -14,10 +14,10 @@ int main ()
   Vector2 pos = {128.0f, 128.0f};
   Character lady(pos);
 
-  lady.load_texture("run", Kitsune::RUN_TEXTURE.c_str(), Kitsune::RUN_FRAMES);
-  lady.load_texture("idle", Kitsune::IDLE_TEXTURE.c_str(), Kitsune::IDLE_FRAMES);
-  lady.load_texture("attack", Kitsune::ATTACK_TEXTURE.c_str(), Kitsune::ATTACK_FRAMES);
-  lady.load_texture("jump", Kitsune::JUMP_TEXTURE.c_str(), Kitsune::JUMP_FRAMES);
+  lady.load_texture(STATE_RUN, Kitsune::RUN_TEXTURE.c_str(), Kitsune::RUN_FRAMES);
+  lady.load_texture(STATE_IDLE, Kitsune::IDLE_TEXTURE.c_str(), Kitsune::IDLE_FRAMES);
+  lady.load_texture(STATE_ATTACK, Kitsune::ATTACK_TEXTURE.c_str(), Kitsune::ATTACK_FRAMES);
+  lady.load_texture(STATE_JUMP, Kitsune::JUMP_TEXTURE.c_str(), Kitsune::JUMP_FRAMES);
 
   while (!WindowShouldClose())
   {

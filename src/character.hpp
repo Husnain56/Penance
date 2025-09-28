@@ -1,3 +1,6 @@
+#ifndef CHARACTER_HPP
+#define CHARACTER_HPP
+
 #include "raylib.h"
 #include <iostream>
 
@@ -9,7 +12,7 @@ struct Animation
   int curr_frame;
   int frame_counter;
   int total_frame;
-  int frame_width;
+  float frame_width;
   Rectangle frame_rec;  
 };
 
@@ -59,16 +62,16 @@ class Character
       UnloadTexture(jump_texture);  
     }
 
-    void draw();
+    void draw(void);
     // used to draw the character
 
-    void load_texture (string texture_type, const char* filename, int total_frames);
+    void load_texture (CharacterState texture_type, const char* filename, int total_frames);
     // input:
     //    texture type: (run, idle, attack, jump)
     //    file name: path to the texture
     //    total frames: number of frames texture contains
            
-    void update();
+    void update(void);
     // update deals with the keyboard IO and player movement
     //
     // keyboard IO:
@@ -78,3 +81,4 @@ class Character
     //     Space = jump
    
 };
+#endif

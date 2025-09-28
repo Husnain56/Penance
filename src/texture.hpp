@@ -1,3 +1,6 @@
+#ifndef TEXTURE_HPP
+#define TEXTURE_HPP
+
 #include <string>
 using std::string;
 
@@ -9,11 +12,11 @@ namespace Resources
     namespace Kitsune
     {
 
-        const string BASE_PATH = "resources/yokai/Kitsune/";
-        const string RUN_TEXTURE = BASE_PATH + "Run.png";
-        const string IDLE_TEXTURE = BASE_PATH + "Idle.png";
-        const string ATTACK_TEXTURE = BASE_PATH + "Attack_3.png";
-        const string JUMP_TEXTURE = BASE_PATH + "Jump.png";
+        inline const string BASE_PATH = "resources/yokai/Kitsune/";
+        inline const string RUN_TEXTURE = BASE_PATH + "Run.png";
+        inline const string IDLE_TEXTURE = BASE_PATH + "Idle.png";
+        inline const string ATTACK_TEXTURE = BASE_PATH + "Attack_3.png";
+        inline const string JUMP_TEXTURE = BASE_PATH + "Jump.png";
 
         constexpr int RUN_FRAMES = 8;
         constexpr int IDLE_FRAMES = 8;
@@ -22,3 +25,5 @@ namespace Resources
     }
 
 }
+
+#endif 

@@ -1,31 +1,46 @@
 #include "character.hpp"
 #include "raylib.h"
+#include <iostream>
 
-void Character::load_texture (string texture_type, const char* filename, int total_frames)
+using std::cout;
+
+void Character::load_texture (CharacterState texture_type, const char* filename, int total_frames)
 {
-  if (texture_type == "run")
-  {
-    run_texture = LoadTexture(filename);
-    run_anim = {0, 0, total_frames, run_texture.width/total_frames, {0, 0 , (float)run_texture.width/total_frames, (float)run_texture.height}};       
+  Texture loaded_texture = LoadTexture(filename);
+  if(loaded_texture.id == 0){
+    cout << "Fail to load texture: " << texture_type << " Path: " << filename << std::endl;
+    return;
   }
-  else if (texture_type == "idle")
-  {
-    idle_texture = LoadTexture(filename);
-    idle_anim = {0, 0, total_frames, idle_texture.width/total_frames, {0, 0, (float)idle_texture.width/total_frames, (float)idle_texture.height}};       
-  }
-  else if (texture_type == "attack")
-  {
-    attack_texture = LoadTexture(filename);
-    attack_anim = {0, 0, total_frames, attack_texture.width/total_frames, {0, 0, (float)attack_texture.width/total_frames, (float)attack_texture.height}};        
-  }
-  else if (texture_type == "jump")
-  {
-    jump_texture = LoadTexture(filename);
-    jump_anim = {0, 0, total_frames, jump_texture.width/total_frames, {0, 0, (float)jump_texture.width/total_frames, (float)jump_texture.height}};
+
+  float frame_width = (float)loaded_texture.width/total_frames;
+  Rectangle frame_rec = {0, 0, frame_width, (float)loaded_texture.height};
+  
+  switch (texture_type) {
+
+    case CharacterState::STATE_IDLE:
+      idle_texture = loaded_texture;
+      idle_anim = {0, 0, total_frames, frame_width, frame_rec};
+      break;
     
+    case CharacterState::STATE_RUN:
+      run_texture = loaded_texture;
+      run_anim = {0, 0, total_frames, frame_width, frame_rec};
+      break;
+  
+    case CharacterState::STATE_ATTACK:
+      attack_texture = loaded_texture;
+      attack_anim = {0, 0, total_frames, frame_width, frame_rec};
+      break;
+
+        case CharacterState::STATE_JUMP:
+      jump_texture = loaded_texture;
+      jump_anim = {0, 0, total_frames, frame_width, frame_rec};
+      break;
+
+      default:
+        cout << "Sprite Type not identified\n";
+        break;
   }
-  else
-    cout << "Texture type not found\n";
 }
 
 void Character::draw()
@@ -78,7 +93,7 @@ void Character::update()
     {      
       attack_anim.frame_counter = 0;
       attack_anim.curr_frame = 0;
-      attack_anim.frame_rec.x = 0;
+      attack_anim.frame_rec.x = 0.f;
       is_attacking = false;
     }
 
@@ -100,7 +115,7 @@ void Character::update()
     {       
       attack_anim.frame_counter = 0;
       attack_anim.curr_frame = 0;
-      attack_anim.frame_rec.x = 0;
+      attack_anim.frame_rec.x = 0.f;
       is_attacking = false;
     }
 
@@ -122,7 +137,7 @@ void Character::update()
     is_attacking = true;
     attack_anim.frame_counter = 0;
     attack_anim.curr_frame = 0;
-    attack_anim.frame_rec.x = 0;
+    attack_anim.frame_rec.x = 0.f;
   }
   else if (IsKeyPressed(KEY_SPACE) && !is_jumping)
   {
@@ -130,7 +145,7 @@ void Character::update()
     current_state = STATE_JUMP;
     jump_anim.curr_frame = 0;
     jump_anim.frame_counter = 0;
-    jump_anim.frame_rec.x = 0;    
+    jump_anim.frame_rec.x = 0.f;    
   }
   else if (!is_attacking && !is_jumping)
   {
@@ -151,7 +166,7 @@ void Character::update()
     {       
       attack_anim.frame_counter = 0;
       attack_anim.curr_frame = 0;
-      attack_anim.frame_rec.x = 0;
+      attack_anim.frame_rec.x = 0.f;
       is_attacking = false;
     }
 
@@ -179,7 +194,7 @@ void Character::update()
     {       
       attack_anim.frame_counter = 0;
       attack_anim.curr_frame = 0;
-      attack_anim.frame_rec.x = 0;
+      attack_anim.frame_rec.x = 0.f;
       is_attacking = false;
     }
 
@@ -204,3 +219,4 @@ void Character::update()
     }
   }  
 }
+
