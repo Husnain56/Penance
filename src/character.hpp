@@ -4,27 +4,33 @@
 #include "raylib.h"
 #include <iostream>
 
-using std::string;
 using std::cout;
+using std::string;
 
 struct Animation
 {
-  int curr_frame;
-  int frame_counter;
-  int total_frame;
-  float frame_width;
-  Rectangle frame_rec;  
+    int curr_frame;
+    int frame_counter;
+    int total_frame;
+    float frame_width;
+    Rectangle frame_rec;
 };
 
 namespace GameConstants
 {
-  constexpr float MOVEMENT_SPEED = 4.0f;
-  constexpr float JUMP_SPEED = 12.0f;
-  constexpr int FRAME_RATE = 3;
-  constexpr int ACTION_FRAME_RATE = 4;
-};
+constexpr float MOVEMENT_SPEED = 4.0f;
+constexpr float JUMP_SPEED = 12.0f;
+constexpr int FRAME_RATE = 8;
+constexpr int ACTION_FRAME_RATE = 4;
+}; // namespace GameConstants
 
-enum CharacterState {STATE_RUN, STATE_IDLE, STATE_ATTACK, STATE_JUMP};
+enum CharacterState
+{
+    STATE_RUN,
+    STATE_IDLE,
+    STATE_ATTACK,
+    STATE_JUMP
+};
 
 class Character
 {
@@ -40,37 +46,36 @@ class Character
   public:
     Character()
     {
-      is_attacking = false;
-      is_facing_right = true;
-      is_jumping = false;
+        is_attacking = false;
+        is_facing_right = true;
+        is_jumping = false;
     }
 
     Character(Vector2 pos)
     {
-      position = pos;
-      is_attacking = false;
-      is_facing_right = true;
-      is_jumping = false;     
+        position = pos;
+        is_attacking = false;
+        is_facing_right = true;
+        is_jumping = false;
     }
 
-    
     ~Character()
     {
-      UnloadTexture(run_texture);  
-      UnloadTexture(idle_texture);  
-      UnloadTexture(attack_texture);  
-      UnloadTexture(jump_texture);  
+        UnloadTexture(run_texture);
+        UnloadTexture(idle_texture);
+        UnloadTexture(attack_texture);
+        UnloadTexture(jump_texture);
     }
 
     void draw(void);
     // used to draw the character
 
-    void load_texture (CharacterState texture_type, const char* filename, int total_frames);
+    void load_texture(CharacterState texture_type, const char *filename, int total_frames);
     // input:
     //    texture type: (run, idle, attack, jump)
     //    file name: path to the texture
     //    total frames: number of frames texture contains
-           
+
     void update(void);
     // update deals with the keyboard IO and player movement
     //
@@ -79,6 +84,5 @@ class Character
     //     D = move right
     //     E = attack
     //     Space = jump
-   
 };
 #endif
