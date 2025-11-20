@@ -64,6 +64,13 @@ cmake --build build
 .\build\Penance.exe
 ```
 
+#### **Windows (MSVC)
+```sh
+cmake -G "MinGW Makefiles" -S . -B build
+cmake --build build
+.\build\Penance.exe
+```
+
 ---
 
 ### 3. Notes
