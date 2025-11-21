@@ -18,6 +18,7 @@ compile_commands.json
 
 # IDE/Editor specific
 .vscode/
+.vs/
 .idea/
 *.swp
 *.swo
@@ -33,3 +34,6 @@ compile_commands.json
 # OS specific
 .DS_Store
 Thumbs.db
+
+# Build output
+out/
