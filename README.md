@@ -6,16 +6,12 @@ Built with **CMake** and works on **Linux, macOS, and Windows**.
 ---
 
 ## Project Structure
-
 ```
-
 Penance/
 │── CMakeLists.txt       \# Build configuration
 │── src/                 \# Game source code (.cpp, .hpp)
 │── resources/           \# Game resources (images, audio, fonts etc.)
-
-````
-
+```
 ---
 
 ## Getting Started
@@ -25,7 +21,7 @@ Penance/
 ```sh
 git clone https://github.com/Husnain56/Penance.git
 cd Penance
-````
+```
 
 -----
 
