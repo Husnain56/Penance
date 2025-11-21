@@ -8,13 +8,13 @@ Built with **CMake** and works on **Linux, macOS, and Windows**.
 ## Project Structure
 
 ```
-Penance/
-│── CMakeLists.txt       # Build configuration
-│── src/                 # Game source code (.cpp, .hpp)
-│── resources/           # Game resources (images, audio, fonts etc.)
-│── include/             # header files
 
-```
+Penance/
+│── CMakeLists.txt       \# Build configuration
+│── src/                 \# Game source code (.cpp, .hpp)
+│── resources/           \# Game resources (images, audio, fonts etc.)
+
+````
 
 ---
 
@@ -23,78 +23,75 @@ Penance/
 ### 1. Clone the repo
 
 ```sh
-git clone https://github.com/YourUser/Penance.git
+git clone https://github.com/Husnain56/Penance.git
 cd Penance
-```
+````
 
----
+-----
 
-### 2. Build Instructions
+## Build & Run Instructions
 
-#### **Linux / macOS**
+### 🐧 Linux (via Terminal)
 
-```sh
-cmake -S . -B build
-cmake --build build
-./build/Penance
-```
+**Prerequisites:**
+Install the necessary libraries for your distribution:
 
-#### **Windows (with Visual Studio / MSVC)**
+  * **Ubuntu / Debian:**
 
-Open a terminal (x64 Native Tools Command Prompt or PowerShell):
+    ```sh
+    sudo apt install build-essential git cmake libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev
+    ```
 
-```powershell
-cmake -S . -B build
-cmake --build build --config Release
-.\build\Release\Penance.exe
-```
+  * **Arch Linux:**
 
-If you want to debug:
+    ```sh
+    sudo pacman -S base-devel git cmake alsa-lib mesa libx11 libxrandr libxi libxinerama libxcursor glu
+    ```
 
-```powershell
-cmake --build build --config Debug
-.\build\Debug\Penance.exe
-```
-
-#### **Windows (with MinGW + Make)**
+**How to Run:**
+We have a `Makefile` to automate everything. Just run:
 
 ```sh
-cmake -G "MinGW Makefiles" -S . -B build
-cmake --build build
-.\build\Penance.exe
+make
 ```
 
-#### **Windows (MSVC)
-```sh
-cmake -G "MinGW Makefiles" -S . -B build
-cmake --build build
-.\build\Penance.exe
-```
+*This will automatically configure CMake, compile the game using all CPU cores, and launch it.*
 
----
+**Other Commands:**
 
-### 3. Notes
+  * `make clean` - Removes the build folder.
+  * `make rebuild` - Cleans and compiles from scratch.
 
-* Always run the game from the project root (`./build/Penance`) so it can find the `resources/` folder.
-* If you add new source files in `src/`, CMake will automatically pick them up.
-* If you add new assets, put them in the `resources/` folder and load them in code like:
+-----
 
-  ```cpp
-  Texture2D knight = LoadTexture("resources/knight.png");
-  ```
+### 🪟 Windows (via IDE)
 
----
+We do not use the command line on Windows. Use your preferred Editor/IDE.
 
-### Tech Stack
+#### **Option A: Visual Studio**
 
-* **Language:** C++17
-* **Graphics/Audio:** raylib
-* **Build System:** CMake
+1.  Open Visual Studio.
+2.  Select **"Open a Local Folder"** and choose the `Penance` folder.
+3.  Wait a moment for Visual Studio to detect `CMakeLists.txt` (watch the output bar at the bottom).
+4.  Find the **Startup Item** dropdown in the top toolbar (it might say "Select Startup Item").
+5.  Select **Penance.exe** from that list.
+6.  Click the green **Play (▶)** button to build and run.
 
----
+#### **Option B: VS Code**
 
-### Team Workflow
+*Requirement: Install the [C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) and [CMake Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools) extensions.*
 
-* Clone → Create a branch → Code → Commit → Push → Open PR.
-* Don’t commit anything in `build/` (already ignored).
+1.  Open the `Penance` folder in VS Code.
+2.  If asked to configure the project, choose your compiler (e.g., `Visual Studio Community 2022 Release - amd64`).
+3.  Look at the **blue status bar** at the very bottom of the window.
+4.  Click the **[Select Launch Target]** button (or the brackets `[]` if no target is selected) and choose `Penance`.
+5.  Click the **Play (▶)** icon located **in that same bottom status bar** to run the game.
+      * *Note: Do not press F5 unless you have manually configured a launch file. Use the bottom bar button.*
 
+-----
+
+## Tech Stack
+
+  * **Language:** C++17
+  * **Graphics/Audio:** raylib 5.5
+  * **Build System:** CMake
