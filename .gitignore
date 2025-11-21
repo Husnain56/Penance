@@ -12,6 +12,10 @@
 CMakeCache.txt
 cmake_install.cmake
 
+# LSP / Intellisense
+compile_commands.json
+.cache/
+
 # IDE/Editor specific
 .vscode/
 .idea/
@@ -22,7 +26,7 @@ cmake_install.cmake
 # Logs
 *.log
 
-# Raylib generated stuff (if any intermediate assets)
+# Raylib generated stuff
 *.tmp
 *.bak
 
