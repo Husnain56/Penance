@@ -7,7 +7,7 @@ class Player : public Character
 	float velocity_y = 0.0f;
 
   public:
-	Player(Vector2 pos) : Character(pos) {}
+	Player(Vector2 pos);
 
 	void update() override;
 	void init() override;

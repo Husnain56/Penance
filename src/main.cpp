@@ -1,3 +1,4 @@
+#include "constants.hpp"
 #include "kitsune.hpp"
 #include "player.hpp"
 
@@ -9,7 +10,7 @@ int main()
 	InitWindow(screenwidth, screenheight, "Penance");
 	SetTargetFPS(60);
 
-	Vector2 pos = {128.0f, 128.0f};
+	Vector2 pos = {100.0f, GameConstants::GROUND_Y};
 	Player player(pos);
 	player.init();
 

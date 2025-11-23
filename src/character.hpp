@@ -7,6 +7,7 @@ class Character
   protected:
 	Texture2D run_texture, idle_texture, attack_texture, jump_texture;
 	Vector2 position;
+	float scale;
 
 	bool is_facing_right;
 	bool is_attacking;
@@ -16,8 +17,6 @@ class Character
 	Animation run_anim, idle_anim, attack_anim, jump_anim;
 
   public:
-	Character();
-
 	Character(Vector2 pos);
 
 	virtual ~Character();
@@ -45,4 +44,6 @@ class Character
 
 	Vector2 get_position() const { return position; }
 	// getter to help main.cpp if needed
+
+	void set_scale(float new_scale) { scale = new_scale; }
 };
