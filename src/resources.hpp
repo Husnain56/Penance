@@ -8,10 +8,10 @@ namespace Resources
 	{
 		inline const std::string BASE_PATH = "resources/enemies/kitsune/";
 
-		inline const std::string RUN_TEXTURE = BASE_PATH + "Run.png";
-		inline const std::string IDLE_TEXTURE = BASE_PATH + "Idle.png";
-		inline const std::string ATTACK_TEXTURE = BASE_PATH + "Attack_3.png";
-		inline const std::string JUMP_TEXTURE = BASE_PATH + "Jump.png";
+		inline const std::string RUN_TEXTURE = BASE_PATH + "run.png";
+		inline const std::string IDLE_TEXTURE = BASE_PATH + "idle.png";
+		inline const std::string ATTACK_TEXTURE = BASE_PATH + "attack_3.png";
+		inline const std::string JUMP_TEXTURE = BASE_PATH + "jump.png";
 
 		constexpr int RUN_FRAMES = 8;
 		constexpr int IDLE_FRAMES = 8;
