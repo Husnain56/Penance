@@ -3,6 +3,9 @@
 
 class Player : public Character
 {
+  private:
+	float velocity_y = 0.0f;
+
   public:
 	Player(Vector2 pos) : Character(pos) {}
 
