@@ -71,8 +71,8 @@ void Character::load_texture(CharacterState texture_type, const char *filename, 
 
 void Character::draw()
 {
-	Texture2D texture;
-	Rectangle frame_rec;
+	Texture2D texture = {0};
+	Rectangle frame_rec = {0, 0, 0, 0};
 
 	if (is_attacking)
 	{
