@@ -6,7 +6,7 @@ namespace Resources
 {
 	namespace Kitsune
 	{
-		inline const std::string BASE_PATH = "resources/yokai/Kitsune/";
+		inline const std::string BASE_PATH = "resources/enemies/kitsune/";
 
 		inline const std::string RUN_TEXTURE = BASE_PATH + "Run.png";
 		inline const std::string IDLE_TEXTURE = BASE_PATH + "Idle.png";
