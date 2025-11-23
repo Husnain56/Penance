@@ -1,5 +1,6 @@
 #include "player.hpp"
 #include "constants.hpp"
+#include "resources.hpp"
 
 void Player::update()
 {
@@ -164,4 +165,14 @@ void Player::update()
 			idle_anim.frame_rec.x = (float)idle_anim.curr_frame * idle_anim.frame_width;
 		}
 	}
+}
+
+void Player::init()
+{
+	using namespace Resources::PlayerResource;
+
+	load_texture(STATE_RUN, RUN_TEXTURE.c_str(), RUN_FRAMES);
+	load_texture(STATE_IDLE, IDLE_TEXTURE.c_str(), IDLE_FRAMES);
+	load_texture(STATE_ATTACK, ATTACK_TEXTURE.c_str(), ATTACK_FRAMES);
+	load_texture(STATE_JUMP, JUMP_TEXTURE.c_str(), JUMP_FRAMES);
 }

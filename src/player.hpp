@@ -10,4 +10,5 @@ class Player : public Character
 	Player(Vector2 pos) : Character(pos) {}
 
 	void update() override;
+	void init() override;
 };

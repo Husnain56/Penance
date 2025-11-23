@@ -40,6 +40,9 @@ class Character
 	//     E = attack
 	//     Space = jump
 
+	virtual void init() = 0;
+	// init initalises the textures for every character
+
 	Vector2 get_position() const { return position; }
 	// getter to help main.cpp if needed
 };
