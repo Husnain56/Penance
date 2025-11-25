@@ -1,10 +1,16 @@
 #include "player.hpp"
 #include "constants.hpp"
 #include "resources.hpp"
+#include <cmath>
 
 Player::Player(Vector2 pos) : Character(pos)
 {
 	scale = 2.5f;
+
+	accel = 0.7f;
+	decel = 0.85f;
+	max_speed = 6.0f;
+	velocity_x = 0.0f;
 }
 
 void Player::init()
@@ -20,15 +26,15 @@ void Player::init()
 void Player::update()
 {
 	using namespace GameConstants;
-
+	
 	// ==============================
-	// 1. PHYSICS ENGINE
+	// 1. PHYSICS ENGINE (vertical)
 	// ==============================
 
 	// Apply Gravity (Always pulls down)
 	velocity_y += GRAVITY;
 
-	// Apply Velocity to Position
+	// Apply vertical velocity to position
 	position.y += velocity_y;
 
 	// Ground Collision (Floor Check)
@@ -55,7 +61,7 @@ void Player::update()
 	}
 
 	// ==============================
-	// 2. INPUT HANDLING
+	// 2. INPUT & HORIZONTAL PHYSICS
 	// ==============================
 
 	// --- Jump Input ---
@@ -82,8 +88,8 @@ void Player::update()
 		attack_anim.frame_rec.x = 0.f;
 	}
 
-	// --- Horizontal Movement ---
-	// We allow moving Left/Right even while in the air (Air Control)
+	// Horizontal acceleration / deceleration
+	bool moving = false;
 	if (IsKeyDown(KEY_D))
 	{
 		// Interrupt Attack if moving
@@ -92,12 +98,9 @@ void Player::update()
 			is_attacking = false;
 		}
 
-		position.x += MOVEMENT_SPEED;
+		velocity_x += accel;
 		is_facing_right = true;
-
-		// Only change state to RUN if we are on the ground
-		if (!is_jumping)
-			current_state = STATE_RUN;
+		moving = true;
 	}
 	else if (IsKeyDown(KEY_A))
 	{
@@ -106,23 +109,41 @@ void Player::update()
 			is_attacking = false;
 		}
 
-		position.x -= MOVEMENT_SPEED;
+		velocity_x -= accel;
 		is_facing_right = false;
-
-		if (!is_jumping)
-			current_state = STATE_RUN;
+		moving = true;
 	}
-	// If no keys pressed and on ground, go to IDLE
-	else if (!is_jumping && !is_attacking)
+
+	// Clamp horizontal speed
+	if (velocity_x > max_speed)
+		velocity_x = max_speed;
+	if (velocity_x < -max_speed)
+		velocity_x = -max_speed;
+
+	// Apply deceleration
+	if (!moving)
 	{
-		current_state = STATE_IDLE;
+		velocity_x *= decel;
+		if (std::fabs(velocity_x) < 0.05f)
+			velocity_x = 0.0f;
+	}
+
+	position.x += velocity_x;
+
+	// Only change state to RUN if we are on the ground and moving
+	if (!is_jumping && !is_attacking)
+	{
+		if (std::fabs(velocity_x) > 0.5f)
+			current_state = STATE_RUN;
+		else
+			current_state = STATE_IDLE;
 	}
 
 	// ==============================
 	// 3. ANIMATION LOGIC
 	// ==============================
 
-	// NOTE: Animation logic is now purely visual. It does NOT affect position.
+	// NOTE: Animation logic is purely visual. It does NOT affect position.
 
 	if (is_attacking)
 	{
@@ -145,8 +166,6 @@ void Player::update()
 	}
 	else if (is_jumping) // In the air
 	{
-		// Simply play the jump animation.
-		// It doesn't need to control Y position anymore.
 		jump_anim.frame_counter++;
 		if (jump_anim.frame_counter >= (60 / FRAME_RATE))
 		{

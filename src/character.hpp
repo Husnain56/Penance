@@ -16,6 +16,10 @@ class Character
 	CharacterState current_state;
 	Animation run_anim, idle_anim, attack_anim, jump_anim;
 
+	// Health
+	int hp;
+	int max_hp;
+
   public:
 	Character(Vector2 pos);
 
@@ -46,4 +50,11 @@ class Character
 	// getter to help main.cpp if needed
 
 	void set_scale(float new_scale) { scale = new_scale; }
+
+	// Health API
+	int get_hp() const { return hp; }
+	int get_max_hp() const { return max_hp; }
+	bool is_alive() const { return hp > 0; }
+	void take_damage(int amount);
+	void heal(int amount);
 };
