@@ -1,9 +1,13 @@
 #include "enemy.hpp"
 #include "resources.hpp"
 
-class BlueSamurai : public Enemy {
+class BlueSamurai : public LongRangeEnemy {
 public:
-  BlueSamurai(Vector2 pos) : Enemy(pos) {}
+  BlueSamurai(Vector2 pos) : LongRangeEnemy(pos) 
+  {
+	  this->draw_offset = { 0.0f, -20.0f };
+	  this->chase_speed = 6.0f;
+  }
   void init() override {
     using namespace Resources::BlueSamuraiResource;
 

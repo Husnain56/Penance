@@ -27,11 +27,7 @@ class Enemy : public Character
 		  attack_hit_registered(false),
 		  velocity_y(0.0f),
 		  ai_state(AIState::ROAM),
-		  patrol_speed(MOVEMENT_SPEED),
-		  chase_speed(2.8f),
-		  aggro_range(480.0f),
-		  attack_range(64.0f),
-		  attack_damage(15)
+		  patrol_speed(MOVEMENT_SPEED)
 	{
 		s_enemies.push_back(this);
 	}
@@ -53,7 +49,7 @@ class Enemy : public Character
 	static const std::vector<Enemy *> &all() { return s_enemies; }
 
 	// --- Protected hooks so child classes can override only behavior they need ---
-  protected:
+  public:
 	// Called when deciding ROAM behaviour. Default: simple left/right patrol.
 	// Child classes can override to change roaming movement (e.g., idle, patrol area etc.)
 	virtual void on_roam(const Map &map, float &outMoveX)
@@ -81,12 +77,19 @@ class Enemy : public Character
 		// default does nothing special; update() will handle animations / hits
 	}
 
+
 	// Tuning parameters for AI (protected so child classes can tweak in ctor)
 	float patrol_speed;
 	float chase_speed;
 	float aggro_range;
 	float attack_range;
 	int attack_damage;
+
+	void set_aggro_range(float range) { aggro_range = range; }
+	void set_attack_range(float range) { attack_range = range; }
+	void set_attack_damage(int damage) { attack_damage = damage; }
+	void set_patrol_speed(float speed) { patrol_speed = speed; }
+	void set_chase_speed(float speed) { chase_speed = speed; };
 
   private:
 	Player *target_player;
@@ -103,3 +106,34 @@ class Enemy : public Character
 	// Central registry of enemies
 	static std::vector<Enemy *> s_enemies;
 };
+
+
+class LongRangeEnemy : public Enemy
+{
+public:
+	LongRangeEnemy(Vector2 pos)
+		: Enemy(pos)
+	{
+		set_aggro_range(400.0f);
+		set_attack_range(300.0f);
+		set_attack_damage(15);
+		set_patrol_speed(4.0f);
+		set_chase_speed(6.0f);
+	}
+};
+
+class ShortRangeEnemy : public Enemy
+{
+public:
+	ShortRangeEnemy(Vector2 pos)
+		: Enemy(pos)
+	{
+		set_aggro_range(250.0f);
+		set_attack_range(90.0f);
+		set_attack_damage(10);
+		set_patrol_speed(7.0f);
+		set_chase_speed(15.0f);
+	}
+};
+
+class MainVillain : public Enemy{};
