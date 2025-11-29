@@ -39,32 +39,32 @@ int main()
 	kitsune.init();
 
 	// Setup BlueSamurai (spawn closer so you can test)
-	pos = { 5000.0f, GROUND_Y };
+	pos = { 8000.0f, GROUND_Y };
 	BlueSamurai samurai(pos);
 	samurai.init();
 	samurai.set_scale(2.2f);	
 
-	pos = { 1500.0f, GROUND_Y };
+	pos = { 2500.0f, GROUND_Y };
 	SkeletonWarrior skeleton(pos);
 	skeleton.init();
 
-	pos = { 810.0f, GROUND_Y };
+	pos = { 3500.0f, GROUND_Y };
 	PurpleKnight knight(pos);
 	knight.init();
 
-	pos = { 3000.0f, GROUND_Y };
+	pos = { 5000.0f, GROUND_Y };
 	SkeletonSpearman spearman(pos);
 	spearman.init();
 
-	pos = { 3500.0f, GROUND_Y };
+	pos = { 6000.0f, GROUND_Y };
 	SilverKnight silver_knight(pos);
 	silver_knight.init();
 
-	pos = { 4000.0f, GROUND_Y };
+	pos = { 6500.0f, GROUND_Y };
 	KarasuTengu tengu(pos);
 	tengu.init();
 
-	pos = { 4500.0f, GROUND_Y };
+	pos = { 45000.0f, GROUND_Y };
 	Yamabushi yamabushi(pos);
 	yamabushi.init();
 

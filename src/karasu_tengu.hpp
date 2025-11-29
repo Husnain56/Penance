@@ -6,11 +6,10 @@ class KarasuTengu : public ShortRangeEnemy
   public:
 	KarasuTengu(Vector2 pos) : ShortRangeEnemy(pos) 
 	{
-		set_scale(1.2f);
+		set_scale(1.0f);
 		this->set_attack_damage(20);
 		this->set_chase_speed(5.0f);
 		this->set_attack_range(80.0f);
-		this->set_aggro_range(200.0f);
 
 	}
 	void init() override
