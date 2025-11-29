@@ -4,12 +4,14 @@
 class Player : public Character
 {
   private:
-	float velocity_y = 0.0f;
-	float velocity_x = 0.0f;
+	float velocity_y;
+	float velocity_x;
 
-	float accel = 0.4f;
-	float decel = 0.85f;
-	float max_speed = 6.0f;
+	float accel;
+	float decel;
+	float max_speed;
+
+	int jump_count;
 
   public:
 	Player(Vector2 pos);

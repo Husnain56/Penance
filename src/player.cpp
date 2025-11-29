@@ -11,6 +11,7 @@ Player::Player(Vector2 pos) : Character(pos)
 	max_speed = 6.0f;
 	draw_offset = {0.0f, 40.0f};
 	velocity_x = 0.0f;
+	jump_count = 0;
 }
 
 void Player::init()
@@ -28,9 +29,10 @@ void Player::update(const Map &map)
 	using namespace GameConstants;
 	float tileSize = map.get_tile_size();
 
-	// --- 1. HORIZONTAL MOVEMENT & COLLISION ---
+	// ==============================
+	// 1. HORIZONTAL MOVEMENT
+	// ==============================
 
-	// Input Logic
 	bool moving = false;
 	if (IsKeyDown(KEY_D))
 	{
@@ -44,10 +46,14 @@ void Player::update(const Map &map)
 		is_facing_right = false;
 		moving = true;
 	}
+
+	// Clamp speed
 	if (velocity_x > max_speed)
 		velocity_x = max_speed;
 	if (velocity_x < -max_speed)
 		velocity_x = -max_speed;
+
+	// Friction
 	if (!moving)
 	{
 		velocity_x *= decel;
@@ -55,49 +61,45 @@ void Player::update(const Map &map)
 			velocity_x = 0.0f;
 	}
 
-	// Apply X Move
+	// Apply X
 	position.x += velocity_x;
 
-	// Check Wall Collision
-	// We define a "Hitbox" slightly smaller than the sprite
-	float hitW = run_anim.frame_width * scale * 0.5f;		   // Width of hitbox
-	float hitH = run_anim.frame_rec.height * scale * 0.9f;	   // Height of hitbox
-	float offX = (run_anim.frame_width * scale - hitW) / 2.0f; // Center it
+	// --- Horizontal Collision ---
+	float hitW = run_anim.frame_width * scale * 0.5f;
+	float hitH = run_anim.frame_rec.height * scale * 0.9f;
+	float offX = (run_anim.frame_width * scale - hitW) / 2.0f;
 	float offY = (run_anim.frame_rec.height * scale - hitH);
 
-	// Calculate grid coordinates of player's edges
 	int leftTile = (int)((position.x + offX) / tileSize);
 	int rightTile = (int)((position.x + offX + hitW) / tileSize);
 	int topTile = (int)((position.y + offY) / tileSize);
-	int bottomTile = (int)((position.y + offY + hitH - 1) / tileSize); // -1 buffer
+	int bottomTile = (int)((position.y + offY + hitH - 1) / tileSize);
 
-	// Check corners for walls
-	bool collisionX = false;
-	if (velocity_x > 0) // Moving Right
+	if (velocity_x > 0) // Right
 	{
 		if (map.get_tile_id(rightTile, topTile) > 0 || map.get_tile_id(rightTile, bottomTile) > 0)
 		{
-			position.x = (rightTile * tileSize) - hitW - offX - 0.1f; // Snap to left of wall
+			position.x = (rightTile * tileSize) - hitW - offX - 0.1f;
 			velocity_x = 0;
-			collisionX = true;
 		}
 	}
-	else if (velocity_x < 0) // Moving Left
+	else if (velocity_x < 0) // Left
 	{
 		if (map.get_tile_id(leftTile, topTile) > 0 || map.get_tile_id(leftTile, bottomTile) > 0)
 		{
-			position.x = ((leftTile + 1) * tileSize) - offX + 0.1f; // Snap to right of wall
+			position.x = ((leftTile + 1) * tileSize) - offX + 0.1f;
 			velocity_x = 0;
-			collisionX = true;
 		}
 	}
 
-	// --- 2. VERTICAL MOVEMENT & COLLISION ---
+	// ==============================
+	// 2. VERTICAL MOVEMENT & DOUBLE JUMP LOGIC
+	// ==============================
 
 	velocity_y += GRAVITY;
 	position.y += velocity_y;
 
-	// Recalculate grid coords after Y move
+	// Recalc grids for Y
 	leftTile = (int)((position.x + offX) / tileSize);
 	rightTile = (int)((position.x + offX + hitW) / tileSize);
 	topTile = (int)((position.y + offY) / tileSize);
@@ -105,37 +107,55 @@ void Player::update(const Map &map)
 
 	if (velocity_y > 0) // Falling
 	{
-		// Check feet
-		if (map.get_tile_id(leftTile, bottomTile) > 0 || map.get_tile_id(rightTile, bottomTile) > 0)
+		// Check map floor
+		bool hitMapFloor = (map.get_tile_id(leftTile, bottomTile) > 0
+							|| map.get_tile_id(rightTile, bottomTile) > 0);
+
+		// Check constant floor (fallback)
+		bool hitWorldFloor = (position.y >= GROUND_Y);
+
+		if (hitMapFloor || hitWorldFloor)
 		{
-			position.y = (bottomTile * tileSize) - offY - hitH; // Snap to floor
+			if (hitMapFloor)
+				position.y = (bottomTile * tileSize) - offY - hitH;
+			else
+				position.y = GROUND_Y;
+
 			velocity_y = 0;
 			is_jumping = false;
+
+			// RESET DOUBLE JUMP
+			jump_count = 0;
 		}
 		else
 		{
-			is_jumping = true; // Falling into air
+			is_jumping = true;
 		}
 	}
 	else if (velocity_y < 0) // Jumping up
 	{
-		// Check head
 		if (map.get_tile_id(leftTile, topTile) > 0 || map.get_tile_id(rightTile, topTile) > 0)
 		{
-			position.y = ((topTile + 1) * tileSize) - offY; // Snap to bottom of ceiling
+			position.y = ((topTile + 1) * tileSize) - offY;
 			velocity_y = 0;
 		}
 	}
 
-	// --- 3. JUMP INPUT ---
-	if (IsKeyPressed(KEY_SPACE) && !is_jumping)
+	// --- DOUBLE JUMP INPUT ---
+	// Change: Check jump_count < 2 instead of !is_jumping
+	if (IsKeyPressed(KEY_SPACE) && jump_count < 2)
 	{
 		is_jumping = true;
 		current_state = STATE_JUMP;
 		velocity_y = JUMP_FORCE;
-		// Reset anim...
+
+		// Increase counter
+		jump_count++;
+
+		// Reset Animation so the second jump feels punchy
 		jump_anim.curr_frame = 0;
 		jump_anim.frame_counter = 0;
+		jump_anim.frame_rec.x = 0.f;
 	}
 
 	// --- 4. ATTACK INPUT ---
@@ -156,9 +176,7 @@ void Player::update(const Map &map)
 			current_state = STATE_IDLE;
 	}
 
-	// --- 6. ANIMATION PLAYBACK (Unchanged) ---
-	// (Copy your existing animation update logic here: if(is_attacking)... else if(is_jumping)...)
-	// I am omitting the 50 lines of animation code for brevity, but KEEP IT exactly as you had it!
+	// --- 6. ANIMATION PLAYBACK ---
 	if (is_attacking)
 	{
 		attack_anim.frame_counter++;
@@ -171,7 +189,8 @@ void Player::update(const Map &map)
 				is_attacking = false;
 				attack_anim.curr_frame = 0;
 			}
-			attack_anim.frame_rec.x = (float)attack_anim.curr_frame * attack_anim.frame_width;
+			else
+				attack_anim.frame_rec.x = (float)attack_anim.curr_frame * attack_anim.frame_width;
 		}
 	}
 	else if (is_jumping)
