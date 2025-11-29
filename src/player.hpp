@@ -1,8 +1,6 @@
 #pragma once
 #include "character.hpp"
 
-class Enemy; // forward declaration
-
 class Player : public Character
 {
   private:
@@ -15,8 +13,7 @@ class Player : public Character
 
 	int jump_count;
 
-	// Pointer to an enemy so player attacks can affect it
-	Enemy *target_enemy;
+	// bookkeeping for player's attack (single hit per attack animation)
 	bool attack_hit_registered;
 
   public:
@@ -24,7 +21,4 @@ class Player : public Character
 
 	void update(const Map &map) override;
 	void init() override;
-
-	// Link an enemy for interaction (nullable)
-	void set_target_enemy(Enemy *e) { target_enemy = e; }
 };

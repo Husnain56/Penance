@@ -1,5 +1,6 @@
 #include "constants.hpp"
 #include "kitsune.hpp"
+#include "blue_samurai.hpp"
 #include "map.hpp"
 #include "player.hpp"
 #include "resources.hpp"
@@ -27,41 +28,31 @@ int main()
 	Kitsune kitsune(pos);
 	kitsune.init();
 
+	// Setup BlueSamurai (spawn closer so you can test)
+	/*pos = {1100.0f, GROUND_Y};
+	BlueSamurai samurai(pos);
+	samurai.init();
+	samurai.set_scale(2.2f);*/
+
 	// Link them so they can interact (attacks/damage)
-	player.set_target_enemy(&kitsune);
 	kitsune.set_target_player(&player);
+	//samurai.set_target_player(&player);
 
 	// Camera
 	Camera2D camera = {0};
 	camera.zoom = 1.0f;
-	camera.offset = {(float)SCREEN_WIDTH * 0.5f, (float)SCREEN_HEIGHT * 0.5f};
+	camera.offset = {(float)SCREEN_WIDTH * 0.38f, (float)SCREEN_HEIGHT * 0.5f};
 
 	while (!WindowShouldClose())
 	{
 		// Update character movement
 		player.update(currentMap);
 		kitsune.update(currentMap);
+		//samurai.update(currentMap);
 
 		// --- Camera Logic ---
 		// 1. Follow Player
 		camera.target = player.get_position();
-
-		// 2. Clamp Camera (Don't view outside map)
-		float mapWidthPixels = currentMap.get_width() * currentMap.get_tile_size();
-		float mapHeightPixels = currentMap.get_height() * currentMap.get_tile_size();
-
-		float camW = SCREEN_WIDTH;
-		float camH = SCREEN_HEIGHT;
-
-		// Clamp X
-		if (camera.target.x < camW / 2)
-			camera.target.x = camW / 2;
-		if (camera.target.x > mapWidthPixels - camW / 2)
-			camera.target.x = mapWidthPixels - camW / 2;
-
-		// Clamp Y (Optional, usually you want to follow up/down)
-		// if (camera.target.y > mapHeightPixels - camH/2) camera.target.y = mapHeightPixels -
-		// camH/2;
 
 		// --- Drawing ---
 		BeginDrawing();
@@ -70,6 +61,7 @@ int main()
 		BeginMode2D(camera);
 		currentMap.draw();
 		kitsune.draw();
+		//samurai.draw();
 		player.draw();
 		EndMode2D();
 

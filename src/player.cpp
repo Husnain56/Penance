@@ -1,5 +1,5 @@
 #include "player.hpp"
-#include "enemy.hpp" // required for calling Enemy::take_damage
+#include "enemy.hpp"
 #include "constants.hpp"
 #include "resources.hpp"
 #include <cmath>
@@ -9,12 +9,11 @@ Player::Player(Vector2 pos) : Character(pos)
 	scale = 2.5f;
 	accel = 0.7f;
 	decel = 0.85f;
-	max_speed = 6.0f;
+	max_speed = 20.0f;
 	draw_offset = {0.0f, 40.0f};
 	velocity_x = 0.0f;
 	velocity_y = 0.0f;
 	jump_count = 0;
-	target_enemy = nullptr;
 	attack_hit_registered = false;
 }
 
@@ -184,8 +183,9 @@ void Player::update(const Map &map)
 	// --- 6. ANIMATION PLAYBACK & ATTACK HIT LOGIC ---
 	if (is_attacking)
 	{
+		// Faster playback for attack action
 		attack_anim.frame_counter++;
-		if (attack_anim.frame_counter >= (60 / FRAME_RATE))
+		if (attack_anim.frame_counter >= (60 / PLAYER_ATTACK_FRAME_RATE))
 		{
 			attack_anim.frame_counter = 0;
 			attack_anim.curr_frame++;
@@ -198,27 +198,46 @@ void Player::update(const Map &map)
 			else
 			{
 				attack_anim.frame_rec.x = (float)attack_anim.curr_frame * attack_anim.frame_width;
+				attack_anim.frame_rec.width = attack_anim.frame_width; // ensure stable width
 
-				// Determine a reasonable hit frame (middle of animation)
+				// Determine hit frame (near middle)
 				int hit_frame = attack_anim.total_frame > 0 ? (attack_anim.total_frame / 2) : 0;
 
-				// Apply damage once at the hit frame if enemy present and in range
-				if (!attack_hit_registered && attack_anim.curr_frame == hit_frame && target_enemy != nullptr)
+				// Apply damage once at the hit frame to nearest enemy in range and in front
+				if (!attack_hit_registered && attack_anim.curr_frame == hit_frame)
 				{
-					// compute distance between centers
-					Vector2 myPos = get_position();
-					Vector2 enemyPos = target_enemy->get_position();
-					float dx = (enemyPos.x - myPos.x);
-					float dy = (enemyPos.y - myPos.y);
-					float dist = std::sqrt(dx * dx + dy * dy);
+					const float range = PLAYER_ATTACK_RANGE * (scale / 2.5f);
+					const int dmg = PLAYER_ATTACK_DAMAGE;
 
-					const float PLAYER_ATTACK_RANGE = 80.0f * (scale / 2.5f); // scaled
-					const int PLAYER_ATTACK_DAMAGE = 25;
+					Enemy *closest = nullptr;
+					float closestDist = 1e9f;
 
-					if (dist <= PLAYER_ATTACK_RANGE)
+					for (Enemy *e : Enemy::all())
 					{
-						target_enemy->take_damage(PLAYER_ATTACK_DAMAGE);
+						if (e == nullptr || !e->is_alive())
+							continue;
+
+						Vector2 myPos = get_position();
+						Vector2 enemyPos = e->get_position();
+						float dx = enemyPos.x - myPos.x;
+						float dy = enemyPos.y - myPos.y;
+						float dist = std::sqrt(dx * dx + dy * dy);
+
+						// require enemy roughly in front for more consistent hits
+						bool inFront = (dx >= 0 && is_facing_right) || (dx <= 0 && !is_facing_right);
+
+						if (dist <= range && inFront && dist < closestDist)
+						{
+							closestDist = dist;
+							closest = e;
+						}
 					}
+
+					if (closest != nullptr)
+					{
+						closest->take_damage(dmg);
+					}
+
 					attack_hit_registered = true;
 				}
 			}
