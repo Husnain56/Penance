@@ -19,7 +19,7 @@ int main()
 	currentMap.load_map(CASTLE_IMAGE, CASTLE_CSV);
 
 	// Setup Player
-	Vector2 pos = {200.0f, GROUND_Y - 40.0f};
+	Vector2 pos = {200.0f, GROUND_Y - 200.0f};
 	Player player(pos);
 	player.init();
 

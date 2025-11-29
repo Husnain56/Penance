@@ -19,9 +19,9 @@ Player::Player(Vector2 pos) : Character(pos)
 
 	// Dash defaults: adjust to taste
 	is_dashing = false;
-	dash_frames_total = 12;        // number of frames dash lasts
+	dash_frames_total = 10;        // number of frames dash lasts
 	dash_frames_remaining = 0;
-	dash_speed = 45.0f;           // pixels per frame -> dash distance ~ dash_speed * dash_frames_total
+	dash_speed = 30.0f;           // pixels per frame -> dash distance ~ dash_speed * dash_frames_total
 	dash_cooldown_frames = 30;    // cooldown in frames (~0.5s at 60FPS)
 	dash_cooldown_timer = 0;
 }
