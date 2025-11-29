@@ -3,6 +3,7 @@
 #include "constants.hpp"
 #include "resources.hpp"
 #include <cmath>
+#include <algorithm>
 
 Player::Player(Vector2 pos) : Character(pos)
 {
@@ -54,9 +55,10 @@ void Player::update(const Map &map)
 	// DASH: trigger on SHIFT press + directional intent (single press)
 	// - uses IsKeyPressed so holding shift won't keep dashing
 	// - respects cooldown and won't allow repeated dashes
+	// - do NOT allow dash while jumping
 	// ==============================
 	bool shiftPressed = IsKeyPressed(KEY_LEFT_SHIFT) || IsKeyPressed(KEY_RIGHT_SHIFT);
-	if (shiftPressed && !is_dashing && dash_cooldown_timer == 0)
+	if (shiftPressed && !is_dashing && dash_cooldown_timer == 0 && !is_jumping)
 	{
 		// require directional input or use facing direction as fallback
 		int dir = 0;
@@ -72,8 +74,13 @@ void Player::update(const Map &map)
 		dash_frames_remaining = dash_frames_total;
 		velocity_x = dir * dash_speed;
 
-		// make dash feel like a quick run
+		// make dash feel like a quick run visually
 		current_state = STATE_RUN;
+
+		// reset run animation so fast traversal looks immediate
+		run_anim.curr_frame = 0;
+		run_anim.frame_counter = 0;
+		run_anim.frame_rec.x = 0.f;
 	}
 
 	// ==============================
@@ -247,7 +254,8 @@ void Player::update(const Map &map)
 	{
 		current_state = STATE_ATTACK;
 		is_attacking = true;
-		attack_hit_registered = false; // allow a fresh hit this attack
+		attack_hit_enemies.clear();           // clear per-attack hit list
+		attack_hit_registered = false;        // legacy flag
 		attack_anim.curr_frame = 0;
 		attack_anim.frame_counter = 0;
 	}
@@ -275,62 +283,53 @@ void Player::update(const Map &map)
 				is_attacking = false;
 				attack_anim.curr_frame = 0;
 				attack_hit_registered = false;
+				attack_hit_enemies.clear();
 			}
 			else
 			{
 				attack_anim.frame_rec.x = (float)attack_anim.curr_frame * attack_anim.frame_width;
 				attack_anim.frame_rec.width = attack_anim.frame_width; // ensure stable width
+			}
+		}
 
-				// Determine hit frame (near middle)
-				int hit_frame = attack_anim.total_frame > 0 ? (attack_anim.total_frame / 2) : 0;
+		// --- LOOSENED HIT: any enemy inside effective range at ANY frame during attack gets hit (once) ---
+		{
+			const float baseRange = PLAYER_ATTACK_RANGE * (scale / 2.5f);
+			const float speedBonus = std::fabs(velocity_x) * 6.0f + (is_dashing ? dash_speed * 0.9f : 0.0f);
+			const float effectiveRange = baseRange + speedBonus;
+			const int dmg = PLAYER_ATTACK_DAMAGE;
 
-				// Apply damage once at the hit frame to nearest enemy in range and in front
-				if (!attack_hit_registered && attack_anim.curr_frame == hit_frame)
+			for (Enemy *e : Enemy::all())
+			{
+				if (e == nullptr || !e->is_alive())
+					continue;
+
+				// skip if already hit this attack
+				if (std::find(attack_hit_enemies.begin(), attack_hit_enemies.end(), e) != attack_hit_enemies.end())
+					continue;
+
+				Vector2 myPos = get_position();
+				Vector2 enemyPos = e->get_position();
+				float dx = enemyPos.x - myPos.x;
+				float dy = enemyPos.y - myPos.y;
+				float dist = std::sqrt(dx * dx + dy * dy);
+
+				// require enemy roughly in front for consistent hits, unless moving fast
+				bool inFront = (dx >= 0 && is_facing_right) || (dx <= 0 && !is_facing_right);
+				bool allowHitWhileMovingFast = (std::fabs(velocity_x) > 8.0f) || is_dashing;
+
+				if (dist <= effectiveRange && (inFront || allowHitWhileMovingFast))
 				{
-					// Make attack forgiving when player is moving fast:
-					// increase effective range by player's horizontal speed and if dashing give a big bonus.
-					const float baseRange = PLAYER_ATTACK_RANGE * (scale / 2.5f);
-					const float speedBonus = std::fabs(velocity_x) * 6.0f + (is_dashing ? dash_speed * 0.9f : 0.0f);
-					const float effectiveRange = baseRange + speedBonus;
-					const int dmg = PLAYER_ATTACK_DAMAGE;
+					e->take_damage(dmg);
 
-					Enemy *closest = nullptr;
-					float closestDist = 1e9f;
-
-					for (Enemy *e : Enemy::all())
+					// If enemy died from this hit, heal the player by 20 hp (cap enforced in Character::heal)
+					if (!e->is_alive())
 					{
-						if (e == nullptr || !e->is_alive())
-							continue;
-
-						Vector2 myPos = get_position();
-						Vector2 enemyPos = e->get_position();
-						float dx = enemyPos.x - myPos.x;
-						float dy = enemyPos.y - myPos.y;
-						float dist = std::sqrt(dx * dx + dy * dy);
-
-						// require enemy roughly in front for consistent hits unless moving fast
-						bool inFront = (dx >= 0 && is_facing_right) || (dx <= 0 && !is_facing_right);
-						bool allowHitWhileMovingFast = (std::fabs(velocity_x) > 8.0f) || is_dashing;
-
-						if (dist <= effectiveRange && (inFront || allowHitWhileMovingFast) && dist < closestDist)
-						{
-							closestDist = dist;
-							closest = e;
-						}
+						this->heal(20);
 					}
 
-					if (closest != nullptr)
-					{
-						closest->take_damage(dmg);
-
-						// If enemy died from this hit, heal the player by 20 hp (cap enforced in Character::heal)
-						if (!closest->is_alive())
-						{
-							this->heal(20);
-						}
-					}
-
-					attack_hit_registered = true;
+					// record this enemy as hit for this attack animation
+					attack_hit_enemies.push_back(e);
 				}
 			}
 		}
@@ -348,8 +347,10 @@ void Player::update(const Map &map)
 	}
 	else if (current_state == STATE_RUN)
 	{
+		// When dashing, play run animation faster to convey speed
+		int run_anim_rate = is_dashing ? (FRAME_RATE * 3) : FRAME_RATE;
 		run_anim.frame_counter++;
-		if (run_anim.frame_counter >= (60 / FRAME_RATE))
+		if (run_anim.frame_counter >= (60 / run_anim_rate))
 		{
 			run_anim.frame_counter = 0;
 			run_anim.curr_frame = (run_anim.curr_frame + 1) % run_anim.total_frame;
