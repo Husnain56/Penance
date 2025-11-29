@@ -20,7 +20,7 @@ Player::Player(Vector2 pos) : Character(pos)
 	is_dashing = false;
 	dash_frames_total = 12;        // number of frames dash lasts
 	dash_frames_remaining = 0;
-	dash_speed = 50.0f;           // pixels per frame -> dash distance ~ dash_speed * dash_frames_total
+	dash_speed = 45.0f;           // pixels per frame -> dash distance ~ dash_speed * dash_frames_total
 	dash_cooldown_frames = 30;    // cooldown in frames (~0.5s at 60FPS)
 	dash_cooldown_timer = 0;
 }
@@ -287,7 +287,11 @@ void Player::update(const Map &map)
 				// Apply damage once at the hit frame to nearest enemy in range and in front
 				if (!attack_hit_registered && attack_anim.curr_frame == hit_frame)
 				{
-					const float range = PLAYER_ATTACK_RANGE * (scale / 2.5f);
+					// Make attack forgiving when player is moving fast:
+					// increase effective range by player's horizontal speed and if dashing give a big bonus.
+					const float baseRange = PLAYER_ATTACK_RANGE * (scale / 2.5f);
+					const float speedBonus = std::fabs(velocity_x) * 6.0f + (is_dashing ? dash_speed * 0.9f : 0.0f);
+					const float effectiveRange = baseRange + speedBonus;
 					const int dmg = PLAYER_ATTACK_DAMAGE;
 
 					Enemy *closest = nullptr;
@@ -304,10 +308,11 @@ void Player::update(const Map &map)
 						float dy = enemyPos.y - myPos.y;
 						float dist = std::sqrt(dx * dx + dy * dy);
 
-						// require enemy roughly in front for more consistent hits
+						// require enemy roughly in front for consistent hits unless moving fast
 						bool inFront = (dx >= 0 && is_facing_right) || (dx <= 0 && !is_facing_right);
+						bool allowHitWhileMovingFast = (std::fabs(velocity_x) > 8.0f) || is_dashing;
 
-						if (dist <= range && inFront && dist < closestDist)
+						if (dist <= effectiveRange && (inFront || allowHitWhileMovingFast) && dist < closestDist)
 						{
 							closestDist = dist;
 							closest = e;
@@ -317,6 +322,12 @@ void Player::update(const Map &map)
 					if (closest != nullptr)
 					{
 						closest->take_damage(dmg);
+
+						// If enemy died from this hit, heal the player by 20 hp (cap enforced in Character::heal)
+						if (!closest->is_alive())
+						{
+							this->heal(20);
+						}
 					}
 
 					attack_hit_registered = true;
