@@ -15,6 +15,14 @@ Player::Player(Vector2 pos) : Character(pos)
 	velocity_y = 0.0f;
 	jump_count = 0;
 	attack_hit_registered = false;
+
+	// Dash defaults: adjust to taste
+	is_dashing = false;
+	dash_frames_total = 12;        // number of frames dash lasts
+	dash_frames_remaining = 0;
+	dash_speed = 50.0f;           // pixels per frame -> dash distance ~ dash_speed * dash_frames_total
+	dash_cooldown_frames = 30;    // cooldown in frames (~0.5s at 60FPS)
+	dash_cooldown_timer = 0;
 }
 
 void Player::init()
@@ -32,40 +40,83 @@ void Player::update(const Map &map)
 	using namespace GameConstants;
 	float tileSize = map.get_tile_size();
 
-	// ==============================
-	// 1. HORIZONTAL MOVEMENT
-	// ==============================
+	// reduce dash cooldown timer (frame-based)
+	if (dash_cooldown_timer > 0)
+		--dash_cooldown_timer;
 
+	// ==============================
+	// 0. Read directional intent (but do not apply yet)
+	// ==============================
+	bool wantRight = IsKeyDown(KEY_D);
+	bool wantLeft = IsKeyDown(KEY_A);
+
+	// ==============================
+	// DASH: trigger on SHIFT press + directional intent (single press)
+	// - uses IsKeyPressed so holding shift won't keep dashing
+	// - respects cooldown and won't allow repeated dashes
+	// ==============================
+	bool shiftPressed = IsKeyPressed(KEY_LEFT_SHIFT) || IsKeyPressed(KEY_RIGHT_SHIFT);
+	if (shiftPressed && !is_dashing && dash_cooldown_timer == 0)
+	{
+		// require directional input or use facing direction as fallback
+		int dir = 0;
+		if (wantRight)
+			dir = 1;
+		else if (wantLeft)
+			dir = -1;
+		else
+			dir = is_facing_right ? 1 : -1;
+
+		// start dash
+		is_dashing = true;
+		dash_frames_remaining = dash_frames_total;
+		velocity_x = dir * dash_speed;
+
+		// make dash feel like a quick run
+		current_state = STATE_RUN;
+	}
+
+	// ==============================
+	// 1. HORIZONTAL MOVEMENT (normal, only when not dashing)
+	// ==============================
 	bool moving = false;
-	if (IsKeyDown(KEY_D))
+	if (!is_dashing)
 	{
-		velocity_x += accel;
-		is_facing_right = true;
-		moving = true;
+		if (wantRight)
+		{
+			velocity_x += accel;
+			is_facing_right = true;
+			moving = true;
+		}
+		if (wantLeft)
+		{
+			velocity_x -= accel;
+			is_facing_right = false;
+			moving = true;
+		}
+
+		// Clamp speed
+		if (velocity_x > max_speed)
+			velocity_x = max_speed;
+		if (velocity_x < -max_speed)
+			velocity_x = -max_speed;
+
+		// Friction
+		if (!moving)
+		{
+			velocity_x *= decel;
+			if (std::fabs(velocity_x) < 0.05f)
+				velocity_x = 0.0f;
+		}
+
+		// Apply X
+		position.x += velocity_x;
 	}
-	if (IsKeyDown(KEY_A))
+	else
 	{
-		velocity_x -= accel;
-		is_facing_right = false;
-		moving = true;
+		// Apply dash movement directly (overrides normal handling)
+		position.x += velocity_x;
 	}
-
-	// Clamp speed
-	if (velocity_x > max_speed)
-		velocity_x = max_speed;
-	if (velocity_x < -max_speed)
-		velocity_x = -max_speed;
-
-	// Friction
-	if (!moving)
-	{
-		velocity_x *= decel;
-		if (std::fabs(velocity_x) < 0.05f)
-			velocity_x = 0.0f;
-	}
-
-	// Apply X
-	position.x += velocity_x;
 
 	// --- Horizontal Collision ---
 	float hitW = run_anim.frame_width * scale * 0.5f;
@@ -84,6 +135,13 @@ void Player::update(const Map &map)
 		{
 			position.x = (rightTile * tileSize) - hitW - offX - 0.1f;
 			velocity_x = 0;
+			// if we collided while dashing, cancel dash
+			if (is_dashing)
+			{
+				is_dashing = false;
+				dash_frames_remaining = 0;
+				dash_cooldown_timer = dash_cooldown_frames;
+			}
 		}
 	}
 	else if (velocity_x < 0) // Left
@@ -92,13 +150,36 @@ void Player::update(const Map &map)
 		{
 			position.x = ((leftTile + 1) * tileSize) - offX + 0.1f;
 			velocity_x = 0;
+			// if we collided while dashing, cancel dash
+			if (is_dashing)
+			{
+				is_dashing = false;
+				dash_frames_remaining = 0;
+				dash_cooldown_timer = dash_cooldown_frames;
+			}
+		}
+	}
+
+	// If we're dashing, count down frames and finish dash when done
+	if (is_dashing)
+	{
+		if (dash_frames_remaining > 0)
+			--dash_frames_remaining;
+
+		// end dash if finished
+		if (dash_frames_remaining <= 0)
+		{
+			is_dashing = false;
+			// stop horizontal movement after dash
+			velocity_x = 0.0f;
+			// start cooldown
+			dash_cooldown_timer = dash_cooldown_frames;
 		}
 	}
 
 	// ==============================
 	// 2. VERTICAL MOVEMENT & DOUBLE JUMP LOGIC
 	// ==============================
-
 	velocity_y += GRAVITY;
 	position.y += velocity_y;
 
