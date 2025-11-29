@@ -1,7 +1,7 @@
 #include "enemy.hpp"
 #include "constants.hpp"
 
-void Enemy::update()
+void Enemy::update(const Map &map)
 {
 	using namespace GameConstants;
 

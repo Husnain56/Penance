@@ -2,53 +2,77 @@
 #include "kitsune.hpp"
 #include "map.hpp"
 #include "player.hpp"
+#include "resources.hpp"
 
 int main()
 {
-	int current_monitor = GetCurrentMonitor();
-	const int screenheight = GetMonitorHeight(current_monitor);
-	const int screenwidth = GetMonitorWidth(current_monitor);
-	InitWindow(screenwidth, screenheight, "Penance");
+	using namespace GameConstants;
+	using namespace Resources::MapResource;
+
+	// Initialising Window
+	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Penance");
 	SetTargetFPS(60);
 
-	Map currentMap(4.0f);
-	currentMap.load_map("resources/maps/castle/castle_tiles.png",
-						"resources/maps/castle/castle_map.csv");
+	// Setup Map
+	Map currentMap(BASE_SPRITE_SCALE);
+	currentMap.load_map(CASTLE_IMAGE, CASTLE_CSV);
 
-	Vector2 pos = {100.0f, GameConstants::GROUND_Y};
+	// Setup Player
+	Vector2 pos = {200.0f, GROUND_Y - 40.0f};
 	Player player(pos);
 	player.init();
 
-	Vector2 pos2 = {128.0f, GameConstants::GROUND_Y};
-	Kitsune kitsune(pos2);
+	// Setup Enemy::Kitsune
+	pos = {800.0f, GROUND_Y};
+	Kitsune kitsune(pos);
 	kitsune.init();
 
+	// Camera
 	Camera2D camera = {0};
-	camera.offset = {(float)screenwidth * 0.5f, (float)screenheight * 0.5f};
-	camera.rotation = 0.0f;
-	camera.zoom = 1.5f;
-
-	player.take_damage(30);
+	camera.zoom = 1.0f;
+	camera.offset = {(float)SCREEN_WIDTH * 0.5f, (float)SCREEN_HEIGHT * 0.5f};
 
 	while (!WindowShouldClose())
 	{
-		player.update();
-		kitsune.update();
+		// Update character movement
+		player.update(currentMap);
+		kitsune.update(currentMap);
 
-		// Update camera: center screen on player's sprite center
-		Vector2 camera_position = player.get_position();
-		camera.target = {camera_position.x - 400, camera_position.y - 150};
+		// --- Camera Logic ---
+		// 1. Follow Player
+		camera.target = player.get_position();
 
+		// 2. Clamp Camera (Don't view outside map)
+		float mapWidthPixels = currentMap.get_width() * currentMap.get_tile_size();
+		float mapHeightPixels = currentMap.get_height() * currentMap.get_tile_size();
+
+		float camW = SCREEN_WIDTH;
+		float camH = SCREEN_HEIGHT;
+
+		// Clamp X
+		if (camera.target.x < camW / 2)
+			camera.target.x = camW / 2;
+		if (camera.target.x > mapWidthPixels - camW / 2)
+			camera.target.x = mapWidthPixels - camW / 2;
+
+		// Clamp Y (Optional, usually you want to follow up/down)
+		// if (camera.target.y > mapHeightPixels - camH/2) camera.target.y = mapHeightPixels -
+		// camH/2;
+
+		// --- Drawing ---
 		BeginDrawing();
-		ClearBackground(WHITE);
-
-		currentMap.draw();
+		ClearBackground(RAYWHITE);
 
 		BeginMode2D(camera);
-		player.draw();
+		currentMap.draw();
 		kitsune.draw();
+		player.draw();
 		EndMode2D();
+
+		DrawFPS(10, 10);
 
 		EndDrawing();
 	}
+
+	CloseWindow();
 }

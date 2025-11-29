@@ -14,6 +14,6 @@ class Player : public Character
   public:
 	Player(Vector2 pos);
 
-	void update() override;
+	void update(const Map &map) override;
 	void init() override;
 };

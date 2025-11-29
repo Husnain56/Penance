@@ -1,18 +1,23 @@
 #pragma once
 
+#include "map.hpp"
 #include "types.hpp"
 
 class Character
 {
   protected:
+	// Textures and Position
 	Texture2D run_texture, idle_texture, attack_texture, jump_texture;
 	Vector2 position;
+	Vector2 draw_offset;
 	float scale;
 
+	// Character States
 	bool is_facing_right;
 	bool is_attacking;
 	bool is_jumping;
 
+	// Current States and Animations
 	CharacterState current_state;
 	Animation run_anim, idle_anim, attack_anim, jump_anim;
 
@@ -34,7 +39,7 @@ class Character
 	//    file name: path to the texture
 	//    total frames: number of frames texture contains
 
-	virtual void update() = 0;
+	virtual void update(const Map &map) = 0;
 	// update deals with the keyboard IO and player movement
 	//
 	// keyboard IO:

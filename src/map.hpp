@@ -1,5 +1,5 @@
 #pragma once
-#include "raylib.h"
+#include <raylib.h>
 #include <string>
 #include <vector>
 
@@ -15,11 +15,12 @@ class Map
 	Map(float scale_factor);
 	~Map();
 
-	// UPDATED: Now takes the image path AND the data path
 	void load_map(const std::string &tileset_path, const std::string &csv_path);
 
 	void draw();
 
-	// Optional: Helper to check if a map is currently loaded
-	bool is_ready() const { return !map_data.empty(); }
+	int get_tile_id(int grid_x, int grid_y) const;
+	float get_tile_size() const { return tile_size * scale; }
+	int get_width() const { return map_data.empty() ? 0 : (int)map_data[0].size(); }
+	int get_height() const { return (int)map_data.size(); }
 };
