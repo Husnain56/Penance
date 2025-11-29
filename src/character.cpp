@@ -14,6 +14,12 @@ Character::Character(Vector2 pos)
 	max_hp = 100;
 	hp = max_hp;
 	draw_offset = {0, 0};
+
+	Animation emptyAnim = { 0, 0, 1, 0.0f, {0,0,0,0} };
+	run_anim = emptyAnim;
+	idle_anim = emptyAnim;
+	attack_anim = emptyAnim;
+	jump_anim = emptyAnim;
 }
 
 Character::~Character()

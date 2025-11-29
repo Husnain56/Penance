@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include "enemy.hpp" // required for calling Enemy::take_damage
 #include "constants.hpp"
 #include "resources.hpp"
 #include <cmath>
@@ -11,7 +12,10 @@ Player::Player(Vector2 pos) : Character(pos)
 	max_speed = 6.0f;
 	draw_offset = {0.0f, 40.0f};
 	velocity_x = 0.0f;
+	velocity_y = 0.0f;
 	jump_count = 0;
+	target_enemy = nullptr;
+	attack_hit_registered = false;
 }
 
 void Player::init()
@@ -105,15 +109,14 @@ void Player::update(const Map &map)
 	topTile = (int)((position.y + offY) / tileSize);
 	bottomTile = (int)((position.y + offY + hitH) / tileSize);
 
+	// Determine grounded (reliable)
+	bool hitMapFloor = (map.get_tile_id(leftTile, bottomTile) > 0
+						|| map.get_tile_id(rightTile, bottomTile) > 0);
+	bool hitWorldFloor = (position.y >= GROUND_Y);
+	bool on_ground = false;
+
 	if (velocity_y > 0) // Falling
 	{
-		// Check map floor
-		bool hitMapFloor = (map.get_tile_id(leftTile, bottomTile) > 0
-							|| map.get_tile_id(rightTile, bottomTile) > 0);
-
-		// Check constant floor (fallback)
-		bool hitWorldFloor = (position.y >= GROUND_Y);
-
 		if (hitMapFloor || hitWorldFloor)
 		{
 			if (hitMapFloor)
@@ -124,7 +127,8 @@ void Player::update(const Map &map)
 			velocity_y = 0;
 			is_jumping = false;
 
-			// RESET DOUBLE JUMP
+			// RESET DOUBLE JUMP when grounded
+			on_ground = true;
 			jump_count = 0;
 		}
 		else
@@ -142,14 +146,14 @@ void Player::update(const Map &map)
 	}
 
 	// --- DOUBLE JUMP INPUT ---
-	// Change: Check jump_count < 2 instead of !is_jumping
+	// Allow up to 2 jumps (initial + one mid-air)
 	if (IsKeyPressed(KEY_SPACE) && jump_count < 2)
 	{
 		is_jumping = true;
 		current_state = STATE_JUMP;
 		velocity_y = JUMP_FORCE;
 
-		// Increase counter
+		// Increase counter (initial jump -> 1, second jump -> 2)
 		jump_count++;
 
 		// Reset Animation so the second jump feels punchy
@@ -163,6 +167,7 @@ void Player::update(const Map &map)
 	{
 		current_state = STATE_ATTACK;
 		is_attacking = true;
+		attack_hit_registered = false; // allow a fresh hit this attack
 		attack_anim.curr_frame = 0;
 		attack_anim.frame_counter = 0;
 	}
@@ -176,7 +181,7 @@ void Player::update(const Map &map)
 			current_state = STATE_IDLE;
 	}
 
-	// --- 6. ANIMATION PLAYBACK ---
+	// --- 6. ANIMATION PLAYBACK & ATTACK HIT LOGIC ---
 	if (is_attacking)
 	{
 		attack_anim.frame_counter++;
@@ -188,9 +193,35 @@ void Player::update(const Map &map)
 			{
 				is_attacking = false;
 				attack_anim.curr_frame = 0;
+				attack_hit_registered = false;
 			}
 			else
+			{
 				attack_anim.frame_rec.x = (float)attack_anim.curr_frame * attack_anim.frame_width;
+
+				// Determine a reasonable hit frame (middle of animation)
+				int hit_frame = attack_anim.total_frame > 0 ? (attack_anim.total_frame / 2) : 0;
+
+				// Apply damage once at the hit frame if enemy present and in range
+				if (!attack_hit_registered && attack_anim.curr_frame == hit_frame && target_enemy != nullptr)
+				{
+					// compute distance between centers
+					Vector2 myPos = get_position();
+					Vector2 enemyPos = target_enemy->get_position();
+					float dx = (enemyPos.x - myPos.x);
+					float dy = (enemyPos.y - myPos.y);
+					float dist = std::sqrt(dx * dx + dy * dy);
+
+					const float PLAYER_ATTACK_RANGE = 80.0f * (scale / 2.5f); // scaled
+					const int PLAYER_ATTACK_DAMAGE = 25;
+
+					if (dist <= PLAYER_ATTACK_RANGE)
+					{
+						target_enemy->take_damage(PLAYER_ATTACK_DAMAGE);
+					}
+					attack_hit_registered = true;
+				}
+			}
 		}
 	}
 	else if (is_jumping)

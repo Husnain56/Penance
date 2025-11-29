@@ -27,6 +27,10 @@ int main()
 	Kitsune kitsune(pos);
 	kitsune.init();
 
+	// Link them so they can interact (attacks/damage)
+	player.set_target_enemy(&kitsune);
+	kitsune.set_target_player(&player);
+
 	// Camera
 	Camera2D camera = {0};
 	camera.zoom = 1.0f;
