@@ -6,7 +6,7 @@ public:
   BlueSamurai(Vector2 pos) : LongRangeEnemy(pos) 
   {
 	  this->draw_offset = { 0.0f, -20.0f };
-	  this->chase_speed = 6.0f;
+      this->set_attack_damage(15);
   }
   void init() override {
     using namespace Resources::BlueSamuraiResource;

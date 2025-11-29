@@ -6,8 +6,8 @@ public:
 	PurpleKnight(Vector2 pos) : ShortRangeEnemy(pos) 
 	{
 		set_scale(1.5f);
-		this->set_attack_damage(15);
-		this->set_chase_speed(8.0f);
+		this->set_attack_damage(10);
+		this->set_chase_speed(14.0f);
 		this->draw_offset = { 0.0f, -80.0f };
 	}
 

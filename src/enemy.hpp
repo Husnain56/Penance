@@ -116,7 +116,7 @@ public:
 	{
 		set_aggro_range(400.0f);
 		set_attack_range(300.0f);
-		set_attack_damage(15);
+		set_attack_damage(10);
 		set_patrol_speed(4.0f);
 		set_chase_speed(6.0f);
 	}
@@ -128,11 +128,11 @@ public:
 	ShortRangeEnemy(Vector2 pos)
 		: Enemy(pos)
 	{
-		set_aggro_range(250.0f);
-		set_attack_range(90.0f);
+		set_aggro_range(600.0f);
+		set_attack_range(70.0f);
 		set_attack_damage(10);
 		set_patrol_speed(7.0f);
-		set_chase_speed(15.0f);
+		set_chase_speed(10.0f);
 	}
 };
 

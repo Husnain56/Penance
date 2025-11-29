@@ -4,7 +4,10 @@
 class Kitsune : public LongRangeEnemy
 {
   public:
-	Kitsune(Vector2 pos) : LongRangeEnemy(pos) {}
+	Kitsune(Vector2 pos) : LongRangeEnemy(pos) 
+	{
+		scale = 1.2f;
+	}
 
 	void init() override
 	{
