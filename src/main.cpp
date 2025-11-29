@@ -14,6 +14,9 @@ int main()
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Penance");
 	SetTargetFPS(60);
 
+	// Background
+	Texture2D background = LoadTexture(BACKGROUND_IMAGE.c_str());
+
 	// Setup Map
 	Map currentMap(BASE_SPRITE_SCALE);
 	currentMap.load_map(CASTLE_IMAGE, CASTLE_CSV);
@@ -41,7 +44,7 @@ int main()
 	// Camera
 	Camera2D camera = {0};
 	camera.zoom = 1.0f;
-	camera.offset = {(float)SCREEN_WIDTH * 0.38f, (float)SCREEN_HEIGHT * 0.5f};
+	camera.offset = {(float)SCREEN_WIDTH * 0.38f, (float)SCREEN_HEIGHT * 0.75f};
 
 	while (!WindowShouldClose())
 	{
@@ -54,9 +57,21 @@ int main()
 		// 1. Follow Player
 		camera.target = player.get_position();
 
+		// Clamp Camera logic...
+		float mapWidth = currentMap.get_width() * currentMap.get_tile_size();
+		if (camera.target.x < SCREEN_WIDTH / 2) camera.target.x = SCREEN_WIDTH / 2;
+		if (camera.target.x > mapWidth - SCREEN_WIDTH / 2) camera.target.x = mapWidth - SCREEN_WIDTH / 2;
+
 		// --- Drawing ---
 		BeginDrawing();
-		ClearBackground(RAYWHITE);
+		ClearBackground(DARKGREEN);
+
+		if(background.id != 0)
+		{
+			Rectangle src = { 0, 0, (float)background.width, (float)background.height };
+			Rectangle dest = { 0, 0, (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT }; // Stretch to fill screen
+			DrawTexturePro(background, src, dest, { 0,0 }, 0.0f, WHITE);
+		}
 
 		BeginMode2D(camera);
 		currentMap.draw();

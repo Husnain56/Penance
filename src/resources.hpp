@@ -51,6 +51,7 @@ namespace Resources
 		inline const std::string BASE_PATH = "resources/maps/";
 		inline const std::string CASTLE_IMAGE = BASE_PATH + "castle/castle_tiles.png";
 		inline const std::string CASTLE_CSV = BASE_PATH + "castle/castle_map.csv";
+		inline const std::string BACKGROUND_IMAGE = BASE_PATH + "background/battleground.png";
 	} // namespace MapResource
 
 } // namespace Resources
