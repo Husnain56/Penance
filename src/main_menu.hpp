@@ -4,15 +4,19 @@
 #include <resources.hpp>
 #include <string>
 using namespace Resources::MenuResource;
+using namespace Resources::FontResource;
 
 class MainMenu
 {
   private:
-	// ========== TEXTURES ==========
+	// ========== TEXTURES & FONTS ==========
 	Texture2D menuBackground;
 	Texture2D menuOverlay;
+	Font menuFont; // Added Font member
+
 	bool textureLoaded;
 	bool overlayLoaded;
+	bool fontLoaded; // Added Font loaded state
 
 	// ========== BUTTON REGIONS ==========
 	Rectangle startButton;
@@ -64,7 +68,7 @@ class MainMenu
 	}
 
 	// =====================================================================
-	//                         OPTIONS POPUP (NAVY BLUE)
+	//                              OPTIONS POPUP (NAVY BLUE)
 	// =====================================================================
 	void DrawOptionsMenu()
 	{
@@ -82,40 +86,43 @@ class MainMenu
 		DrawRectangleLinesEx(popupBox, POPUP_BORDER_THICKNESS, navyLight);
 
 		// Title
-		DrawText("HOW TO PLAY", 820, TITLE_Y, 40, textWhite);
+		DrawTextEx(menuFont, "HOW TO PLAY", {820, (float)TITLE_Y}, 40, 1, textWhite);
 		DrawLine(550, 290, 1370, 290, navyLight);
 
 		// Content
 		int yPos = CONTENT_START_Y;
 
-		DrawText("CONTROLS:", 550, yPos, 30, textWhite);
+		DrawTextEx(menuFont, "CONTROLS:", {550, (float)yPos}, 30, 1, textWhite);
 		yPos += LINE_SPACING;
-		DrawText("- ENTER: Advance dialogue", 570, yPos, 25, textWhite);
-		DrawText("- 1-9: Select dialogue choices", 950, yPos, 25, textWhite);
+		DrawTextEx(menuFont, "- ENTER: Advance dialogue", {570, (float)yPos}, 25, 1, textWhite);
+		DrawTextEx(menuFont, "- 1-9: Select dialogue choices", {950, (float)yPos}, 25, 1,
+				   textWhite);
 		yPos += LINE_SPACING;
-		DrawText("- WASD: Move", 570, yPos, 25, textWhite);
-		DrawText("- Spacebar: Jump", 950, yPos, 25, textWhite);
+		DrawTextEx(menuFont, "- WASD: Move", {570, (float)yPos}, 25, 1, textWhite);
+		DrawTextEx(menuFont, "- Spacebar: Jump", {950, (float)yPos}, 25, 1, textWhite);
 		yPos += LINE_SPACING;
-		DrawText("- E: Attack", 570, yPos, 25, textWhite);
-		DrawText("- ESC: Pause game", 950, yPos, 25, textWhite);
+		DrawTextEx(menuFont, "- E: Attack", {570, (float)yPos}, 25, 1, textWhite);
+		DrawTextEx(menuFont, "- ESC: Pause game", {950, (float)yPos}, 25, 1, textWhite);
 
 		yPos += SECTION_SPACING;
-		DrawText("GAMEPLAY:", 550, yPos, 30, textWhite);
+		DrawTextEx(menuFont, "GAMEPLAY:", {550, (float)yPos}, 30, 1, textWhite);
 		yPos += LINE_SPACING;
-		DrawText("- Read dialogues and make choices", 570, yPos, 25, textWhite);
+		DrawTextEx(menuFont, "- Read dialogues and make choices", {570, (float)yPos}, 25, 1,
+				   textWhite);
 		yPos += LINE_SPACING;
-		DrawText("- Your choices affect the story", 570, yPos, 25, textWhite);
+		DrawTextEx(menuFont, "- Your choices affect the story", {570, (float)yPos}, 25, 1,
+				   textWhite);
 		yPos += LINE_SPACING;
-		DrawText("- Explore different paths", 570, yPos, 25, textWhite);
+		DrawTextEx(menuFont, "- Explore different paths", {570, (float)yPos}, 25, 1, textWhite);
 
 		// Back button
 		DrawRectangleRec(closeButton, navyLight);
-		DrawText("BACK", closeButton.x + 5, closeButton.y + 12, 25, WHITE);
-		DrawText("Click BACK to return to main menu", 750, 830, 20, textWhite);
+		DrawTextEx(menuFont, "BACK", {closeButton.x + 5, closeButton.y + 12}, 25, 1, WHITE);
+		DrawTextEx(menuFont, "Click BACK to return to main menu", {750, 830}, 20, 1, textWhite);
 	}
 
 	// =====================================================================
-	//                         CREDITS POPUP (NAVY BLUE)
+	//                              CREDITS POPUP (NAVY BLUE)
 	// =====================================================================
 	void DrawCreditsMenu()
 	{
@@ -132,48 +139,50 @@ class MainMenu
 		DrawRectangleRec(popupBox, navy);
 		DrawRectangleLinesEx(popupBox, POPUP_BORDER_THICKNESS, royalBlue);
 
-		DrawText("CREDITS", 880, TITLE_Y, 40, textWhite);
+		DrawTextEx(menuFont, "CREDITS", {880, (float)TITLE_Y}, 40, 1, textWhite);
 		DrawLine(550, 290, 1370, 290, royalBlue);
 
 		int yPos = 360;
 		const int creditSpacing = 60;
 
-		DrawText("DEVELOPMENT TEAM", 800, yPos, 30, textWhite);
+		DrawTextEx(menuFont, "DEVELOPMENT TEAM", {800, (float)yPos}, 30, 1, textWhite);
 		yPos += creditSpacing + 20;
 
-		DrawText("Game Mechanic Designer", 650, yPos, 25, gold);
-		DrawText("Eesa Shoaib && Ahsan Baig", 1050, yPos, 25, textWhite);
+		DrawTextEx(menuFont, "Game Mechanic Designer", {650, (float)yPos}, 25, 1, gold);
+		DrawTextEx(menuFont, "Eesa Shoaib && Ahsan Baig", {1050, (float)yPos}, 25, 1, textWhite);
 		yPos += creditSpacing;
 
-		DrawText("Map Designer", 650, yPos, 25, gold);
-		DrawText("Husnain Barkat", 1050, yPos, 25, textWhite);
+		DrawTextEx(menuFont, "Map Designer", {650, (float)yPos}, 25, 1, gold);
+		DrawTextEx(menuFont, "Husnain Barkat", {1050, (float)yPos}, 25, 1, textWhite);
 		yPos += creditSpacing;
 
-		DrawText("Story Writer", 650, yPos, 25, gold);
-		DrawText("Abdullah Mushtaq", 1050, yPos, 25, textWhite);
+		DrawTextEx(menuFont, "Story Writer", {650, (float)yPos}, 25, 1, gold);
+		DrawTextEx(menuFont, "Abdullah Mushtaq", {1050, (float)yPos}, 25, 1, textWhite);
 		yPos += creditSpacing;
 
-		DrawText("Director", 650, yPos, 25, gold);
-		DrawText("Harris Tabassum", 1050, yPos, 25, textWhite);
+		DrawTextEx(menuFont, "Director", {650, (float)yPos}, 25, 1, gold);
+		DrawTextEx(menuFont, "Harris Tabassum", {1050, (float)yPos}, 25, 1, textWhite);
 		yPos += creditSpacing + 30;
 
-		DrawText("Built with Raylib", 830, yPos, 22, textWhite);
+		DrawTextEx(menuFont, "Built with Raylib", {830, (float)yPos}, 22, 1, textWhite);
 		yPos += 40;
-		DrawText("© 2025 - All Rights Reserved", 800, yPos, 20, textWhite);
+		DrawTextEx(menuFont, "© 2025 - All Rights Reserved", {800, (float)yPos}, 20, 1, textWhite);
 
 		DrawRectangleRec(closeButton, royalBlue);
-		DrawText("BACK", closeButton.x + 5, closeButton.y + 12, 25, WHITE);
-		DrawText("Click BACK to return to main menu", 750, 830, 20, textWhite);
+		DrawTextEx(menuFont, "BACK", {closeButton.x + 5, closeButton.y + 12}, 25, 1, WHITE);
+		DrawTextEx(menuFont, "Click BACK to return to main menu", {750, 830}, 20, 1, textWhite);
 	}
 
   public:
 	// ========== CONSTRUCTOR ==========
 	MainMenu()
-		: textureLoaded(false), overlayLoaded(false), startClicked(false), optionsClicked(false),
-		  creditsClicked(false), exitClicked(false), showOptionsMenu(false), showCreditsMenu(false)
+		: textureLoaded(false), overlayLoaded(false), fontLoaded(false), startClicked(false),
+		  optionsClicked(false), creditsClicked(false), exitClicked(false), showOptionsMenu(false),
+		  showCreditsMenu(false)
 	{
 		menuBackground = {0};
 		menuOverlay = {0};
+		menuFont = {0};
 
 		startButton = {860.0f, 580.0f, 290.0f, 70.0f};
 		optionsButton = {880.0f, 740.0f, 250.0f, 60.0f};
@@ -190,6 +199,8 @@ class MainMenu
 			UnloadTexture(menuBackground);
 		if (overlayLoaded)
 			UnloadTexture(menuOverlay);
+		if (fontLoaded)
+			UnloadFont(menuFont);
 	}
 
 	// ========== INITIALIZATION ==========
@@ -215,6 +226,14 @@ class MainMenu
 
 				overlayLoaded = (menuOverlay.id != 0);
 			}
+		}
+
+		// Load font once here
+		if (!fontLoaded)
+		{
+			menuFont = LoadFont(CINZEL_DECORATIVE_BOLD_TTF.c_str());
+			// Check if font loaded correctly (texture id > 0)
+			fontLoaded = (menuFont.texture.id != 0);
 		}
 	}
 
