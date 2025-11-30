@@ -85,12 +85,14 @@ class MainMenu
 		DrawText("CONTROLS:", 550, yPos, 30, DARKGRAY);
 		yPos += LINE_SPACING;
 		DrawText("- ENTER: Advance dialogue", 570, yPos, 25, BLACK);
+		DrawText("- 1-9: Select dialogue choices", 950, yPos, 25, BLACK);
 		yPos += LINE_SPACING;
-		DrawText("- 1-9: Select dialogue choices", 570, yPos, 25, BLACK);
+		DrawText("- WASD: Move", 570, yPos, 25, BLACK);
+		DrawText("- Spacebar: Jump", 950, yPos, 25, BLACK);
 		yPos += LINE_SPACING;
-		DrawText("- ESC: Pause game", 570, yPos, 25, BLACK);
+		DrawText("- E: Attack", 570, yPos, 25, BLACK);
+		DrawText("- ESC: Pause game", 950, yPos, 25, BLACK);
 		yPos += SECTION_SPACING;
-
 		DrawText("GAMEPLAY:", 550, yPos, 30, DARKGRAY);
 		yPos += LINE_SPACING;
 		DrawText("- Read dialogues and make choices", 570, yPos, 25, BLACK);
@@ -127,20 +129,20 @@ class MainMenu
 		DrawText("DEVELOPMENT TEAM", 800, yPos, 30, DARKGRAY);
 		yPos += creditSpacing + 20;
 
-		DrawText("Lead Developer", 650, yPos, 25, GOLD);
-		DrawText("Your Name", 1050, yPos, 25, BLACK);
+		DrawText("Game Mechanic Designer", 650, yPos, 25, GOLD);
+		DrawText("Eesa Shoaib && Ahsan Baig", 1050, yPos, 25, BLACK);
 		yPos += creditSpacing;
 
-		DrawText("Game Designer", 650, yPos, 25, GOLD);
-		DrawText("Your Name", 1050, yPos, 25, BLACK);
+		DrawText("Map Designer", 650, yPos, 25, GOLD);
+		DrawText("Husnain Barkat", 1050, yPos, 25, BLACK);
 		yPos += creditSpacing;
 
 		DrawText("Story Writer", 650, yPos, 25, GOLD);
-		DrawText("Your Name", 1050, yPos, 25, BLACK);
+		DrawText("Abdullah Mushtaq", 1050, yPos, 25, BLACK);
 		yPos += creditSpacing;
 
 		DrawText("Artist", 650, yPos, 25, GOLD);
-		DrawText("Your Name", 1050, yPos, 25, BLACK);
+		DrawText("Harris Tabassum", 1050, yPos, 25, BLACK);
 		yPos += creditSpacing + 30;
 
 		DrawText("Built with Raylib", 830, yPos, 22, DARKGRAY);
