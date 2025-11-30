@@ -13,10 +13,6 @@ using namespace Resources::AvatarResource;
 using namespace Resources::DialogueResource;
 using namespace Resources::DialogueBoxResource;
 
-// ============================================================
-// STRUCTS & CLASSES
-// ============================================================
-
 struct choice
 {
 	int choiceID;
@@ -65,10 +61,6 @@ class StoryDialogues
 		endDialogueFile = "";
 	}
 };
-
-// ============================================================
-// DIALOGUE PARSER
-// ============================================================
 
 class DialogueParser
 {
@@ -187,10 +179,6 @@ class DialogueParser
 		return story;
 	}
 };
-
-// ============================================================
-// DIALOGUE BOX
-// ============================================================
 
 class DialogueBox
 {
@@ -356,11 +344,23 @@ class DialogueBox
 		}
 		if (!boxTextureLoaded)
 		{
-			boxTexture = LoadTexture(DB_IMAGE.c_str());
-			boxTextureLoaded = true;
+			// Load image first
+			Image boxImage = LoadImage(DB_IMAGE.c_str());
+
+			if (boxImage.data != nullptr)
+			{
+				// Replace black with transparent
+				Color black = {0, 0, 0, 255};
+				Color transparent = {0, 0, 0, 0};
+				ImageColorReplace(&boxImage, black, transparent);
+
+				// Load texture from processed image
+				boxTexture = LoadTextureFromImage(boxImage);
+				UnloadImage(boxImage);
+				boxTextureLoaded = true;
+			}
 		}
 	}
-
 	// ===== START DIALOGUE =====
 	void StartDialogue(const string &filename)
 	{
@@ -484,7 +484,6 @@ class DialogueBox
 		Texture2D avatarTexture = GetAvatarTexture(currentDialogue->getAvatarPath());
 
 		// Draw background
-		DrawRectangle(0, 700, 1920, 500, BLACK);
 		DrawTexturePro(boxTexture, {0, 0, (float)boxTexture.width, (float)boxTexture.height},
 					   boxDest, {0, 0}, 0.0f, WHITE);
 
