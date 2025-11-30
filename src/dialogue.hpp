@@ -318,9 +318,9 @@ class DialogueBox
 		boxDest = {500.0f, 720.0f, 800.0f, 300.0f};
 		avatarDest = {532.0f, 770.0f, 125.0f, 160.0f};
 		textPos = {725.0f, 810.0f};
-		namePos = {700.0f, 750.0f};
+		namePos = {720.0f, 750.0f};
 		fontColor = PURPLE;
-		nameColor = RED;
+		nameColor = BLACK;
 	}
 
 	// ===== DESTRUCTOR =====
@@ -516,7 +516,8 @@ class DialogueBox
 		}
 
 		// Draw speaker name
-		DrawTextEx(font, currentDialogue->getSpeaker().c_str(), namePos, FONT_SIZE, 2, nameColor);
+		DrawTextEx(font, currentDialogue->getSpeaker().c_str(), namePos, FONT_SIZE + 15, 2,
+				   nameColor);
 
 		// Draw dialogue text
 		string visibleText = GetVisibleText(currentWrappedText, visibleChars);
