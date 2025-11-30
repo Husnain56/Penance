@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 using namespace std;
+using namespace Resources::MenuResource;
 using namespace Resources::FontResource;
 using namespace Resources::AvatarResource;
 using namespace Resources::DialogueResource;
@@ -190,9 +191,11 @@ class DialogueBox
 	// ===== TEXTURES & FONTS =====
 	Font font;
 	Texture2D boxTexture;
+	Texture2D backgroundTexture;
 	map<string, Texture2D> avatarCache;
 	bool fontLoaded;
 	bool boxTextureLoaded;
+	bool backgroundTextureLoaded;
 
 	// ===== LAYOUT =====
 	Rectangle boxDest;
@@ -302,6 +305,7 @@ class DialogueBox
 		showingChoices = false;
 		fontLoaded = false;
 		boxTextureLoaded = false;
+		backgroundTextureLoaded = false;
 		nextDialogueFile = "";
 		pendingDialogueFile = "";
 
@@ -326,6 +330,8 @@ class DialogueBox
 			UnloadFont(font);
 		if (boxTextureLoaded)
 			UnloadTexture(boxTexture);
+		if (backgroundTextureLoaded)
+			UnloadTexture(backgroundTexture);
 
 		for (auto &pair : avatarCache)
 		{
@@ -359,6 +365,11 @@ class DialogueBox
 				UnloadImage(boxImage);
 				boxTextureLoaded = true;
 			}
+		}
+		if (!backgroundTextureLoaded)
+		{
+			backgroundTexture = LoadTexture(DB_BG_IMAGE.c_str());
+			backgroundTextureLoaded = (backgroundTexture.id != 0);
 		}
 	}
 	// ===== START DIALOGUE =====
@@ -480,10 +491,19 @@ class DialogueBox
 		if (!isActive || currentDialogue == dialogues.end())
 			return;
 
+		// Draw full screen background
+		if (backgroundTextureLoaded)
+		{
+			Rectangle bgSource
+				= {0, 0, (float)backgroundTexture.width, (float)backgroundTexture.height};
+			Rectangle bgDest = {0, 0, 1920, 1080};
+			DrawTexturePro(backgroundTexture, bgSource, bgDest, {0, 0}, 0.0f, WHITE);
+		}
+
 		// Get avatar
 		Texture2D avatarTexture = GetAvatarTexture(currentDialogue->getAvatarPath());
 
-		// Draw background
+		// Draw dialogue box
 		DrawTexturePro(boxTexture, {0, 0, (float)boxTexture.width, (float)boxTexture.height},
 					   boxDest, {0, 0}, 0.0f, WHITE);
 

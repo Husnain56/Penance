@@ -178,6 +178,7 @@ namespace Resources
 		inline const std::string MENU_IMAGE = BASE_PATH + "menu.png";
 		inline const std::string CURSOR_IMAGE = BASE_PATH + "cursor.png";
 		inline const std::string MAIN_MENU_IMAGE = BASE_PATH + "new_menu.png";
+		inline const std::string DB_BG_IMAGE = BASE_PATH + "db_bg.png";
 	} // namespace MenuResource
 
 	namespace DialogueResource
