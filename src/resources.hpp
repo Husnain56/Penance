@@ -223,6 +223,6 @@ namespace Resources
 	namespace IconResource
 	{
 		inline const std::string BASE_PATH = "resources/icon/";
-		inline const std::string ICON_IMAGE = "icon.png";
+		inline const std::string ICON_IMAGE = BASE_PATH + "icon.png";
 	} // namespace IconResource
 } // namespace Resources
