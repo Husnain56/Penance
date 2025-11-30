@@ -35,4 +35,7 @@ class Player : public Character
 
 	void update(const Map &map) override;
 	void init() override;
+	void reset();
+
+	void set_position(Vector2 pos) { position = pos; }
 };

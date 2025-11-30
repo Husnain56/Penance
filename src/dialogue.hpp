@@ -554,4 +554,26 @@ class DialogueBox
 		isActive = false;
 		showingChoices = false;
 	}
+
+	void Reset()
+	{
+		// ---- STATE ----
+		isActive = false;
+		showingChoices = false;
+
+		// ---- DIALOGUE DATA ----
+		dialogues.clear();
+		choices.clear();
+		nextDialogueFile.clear();
+		pendingDialogueFile.clear();
+
+		// Reset iterator safely
+		currentDialogue = dialogues.end();
+
+		// ---- ANIMATION ----
+		charTimer = 0.0f;
+		visibleChars = 0;
+		currentWrappedText.clear();
+		textFullyRevealed = false;
+	}
 };

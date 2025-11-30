@@ -46,8 +46,9 @@ void Player::update(const Map &map)
 	if (is_removed())
 		return;
 
-	// If currently playing dead animation OR hurt state is active, let base class progress it and skip gameplay logic.
-	// process_state handles the dead animation, transition, and hurt knockback/anim.
+	// If currently playing dead animation OR hurt state is active, let base class progress it and
+	// skip gameplay logic. process_state handles the dead animation, transition, and hurt
+	// knockback/anim.
 	if (current_state == STATE_DEAD || current_state == STATE_HURT)
 	{
 		process_state();
@@ -388,4 +389,25 @@ void Player::update(const Map &map)
 
 	// Let Character handle hurt/dead progression (knockback, hurt->dead transition, dead anim)
 	process_state();
+}
+
+void Player::reset()
+{
+	velocity_x = 0.0f;
+	velocity_y = 0.0f;
+	jump_count = 0;
+	attack_hit_registered = false;
+	hp = get_max_hp();
+	dead_anim_playing = false;
+	pending_removal = false;
+
+	// Dash defaults: adjust to taste
+	is_dashing = false;
+	dash_frames_total = 10; // number of frames dash lasts
+	dash_frames_remaining = 0;
+	dash_speed = 30.0f;		   // pixels per frame -> dash distance ~ dash_speed * dash_frames_total
+	dash_cooldown_frames = 30; // cooldown in frames (~0.5s at 60FPS)
+	dash_cooldown_timer = 0;
+
+	set_position({200.0f, GROUND_Y - 200.0f});
 }

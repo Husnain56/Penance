@@ -1,6 +1,7 @@
 #include <game.hpp>
 
 using namespace Resources;
+using namespace EndScreen;
 using namespace MapResource;
 using namespace MenuResource;
 using namespace IconResource;
@@ -14,6 +15,8 @@ Game::Game() : currentMap(BASE_SPRITE_SCALE), player({200.0f, GROUND_Y - 200.0f}
 	SetExitKey(0);
 
 	// Initialising Resources
+	loseScreen = LoadTexture(LOSE_SCREEN.c_str());
+	winScreen = LoadTexture(WIN_SCREEN.c_str());
 	background = LoadTexture(BACKGROUND_IMAGE.c_str());
 	currentMap.load_map(CASTLE_IMAGE, CASTLE_CSV);
 	Image icon = LoadImage(ICON_IMAGE.c_str());
@@ -50,6 +53,8 @@ Game::~Game()
 	enemies.clear();
 
 	UnloadTexture(background);
+	UnloadTexture(loseScreen);
+	UnloadTexture(winScreen);
 	CloseWindow();
 }
 
@@ -80,6 +85,18 @@ void Game::update()
 			update_paused();
 			break;
 		}
+
+		case GAME_WIN:
+		{
+			update_game_win();
+			break;
+		}
+
+		case GAME_OVER:
+		{
+			update_game_over();
+			break;
+		}
 	}
 }
 
@@ -108,6 +125,16 @@ void Game::draw()
 		case PAUSED:
 		{
 			draw_paused();
+			break;
+		}
+		case GAME_WIN:
+		{
+			draw_game_win();
+			break;
+		}
+		case GAME_OVER:
+		{
+			draw_game_over();
 			break;
 		}
 	}
@@ -207,9 +234,11 @@ void Game::update_main_menu()
 
 void Game::update_gameplay()
 {
-
 	// 1. Update Player (Inputs -> Physics -> Animation)
 	player.update(currentMap);
+
+	if (!player.is_alive() && !player.is_dead_anim_playing())
+		currentState = GAME_OVER;
 
 	// 2. Update Enemies (AI -> Physics -> Animation OR Hurt/Dead logic)
 	for (auto &enemy : enemies)
@@ -228,6 +257,9 @@ void Game::update_gameplay()
 			++it;
 		}
 	}
+
+	if (enemies.empty())
+		currentState = GAME_WIN;
 
 	update_camera();
 
@@ -295,6 +327,44 @@ void Game::update_paused()
 	}
 }
 
+void Game::update_game_win()
+{
+	// Go back to main menu
+	if (IsKeyPressed(KEY_ENTER))
+	{
+		currentState = MAIN_MENU;
+		previousState = MAIN_MENU;
+
+		// Reset for new game
+		reset_game();
+	}
+
+	// Quit
+	if (IsKeyPressed(KEY_ESCAPE))
+	{
+		shouldExit = true;
+	}
+}
+
+void Game::update_game_over()
+{
+	// Go back to main menu
+	if (IsKeyPressed(KEY_ENTER))
+	{
+		currentState = MAIN_MENU;
+		previousState = MAIN_MENU;
+
+		// Reset for new game
+		reset_game();
+	}
+
+	// Quit
+	if (IsKeyPressed(KEY_ESCAPE))
+	{
+		shouldExit = true;
+	}
+}
+
 void Game::draw_main_menu()
 {
 	mainMenu.Draw();
@@ -350,4 +420,51 @@ void Game::draw_paused()
 	DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.7f));
 	DrawText("PAUSED", 850, 450, 60, WHITE);
 	DrawText("ESC - Resume | M - Main Menu", 720, 550, 25, GRAY);
+}
+
+void Game::draw_game_win()
+{
+	// FULLSCREEN IMAGE
+	Rectangle src = {0, 0, (float)winScreen.width, (float)winScreen.height};
+	Rectangle dst = {0, 0, (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT};
+
+	DrawTexturePro(winScreen, src, dst, {0, 0}, 0, WHITE);
+
+	DrawText("Press ENTER to return to Main Menu", 600, 850, 30, WHITE);
+	DrawText("Press ESC to quit", 820, 900, 20, GRAY);
+}
+
+void Game::draw_game_over()
+{
+	// FULLSCREEN IMAGE
+	Rectangle src = {0, 0, (float)loseScreen.width, (float)loseScreen.height};
+	Rectangle dst = {0, 0, (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT};
+
+	DrawTexturePro(loseScreen, src, dst, {0, 0}, 0, WHITE);
+
+	DrawText("Press ENTER to return to Main Menu", 600, 850, 30, WHITE);
+	DrawText("Press ESC to quit", 820, 900, 20, GRAY);
+}
+
+void Game::reset_game()
+{
+	// Reset player
+	player.reset();
+
+	// Reset enemies
+	for (auto &e : enemies)
+		delete e;
+	enemies.clear();
+	init_enemies();
+
+	// Reset dialogue
+	storedDialogueFile = "";
+	dialogueBox.Reset();
+
+	// Reset camera
+	camera.target = player.get_position();
+
+	// Reset states
+	previousState = MAIN_MENU;
+	currentState = GAMEPLAY;
 }

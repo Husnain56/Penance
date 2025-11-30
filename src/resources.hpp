@@ -177,7 +177,7 @@ namespace Resources
 		inline const std::string BASE_PATH = "resources/menu/";
 		inline const std::string MENU_IMAGE = BASE_PATH + "menu.png";
 		inline const std::string CURSOR_IMAGE = BASE_PATH + "cursor.png";
-		inline const std::string MAIN_MENU_IMAGE = BASE_PATH + "mainmenu.png";
+		inline const std::string MAIN_MENU_IMAGE = BASE_PATH + "new_menu.png";
 	} // namespace MenuResource
 
 	namespace DialogueResource
@@ -225,4 +225,11 @@ namespace Resources
 		inline const std::string BASE_PATH = "resources/icon/";
 		inline const std::string ICON_IMAGE = BASE_PATH + "icon.png";
 	} // namespace IconResource
+
+	namespace EndScreen
+	{
+		inline const std::string BASE_PATH = "resources/screens/";
+		inline const std::string LOSE_SCREEN = BASE_PATH + "lose_screen.png";
+		inline const std::string WIN_SCREEN = BASE_PATH + "win_screen.png";
+	} // namespace EndScreen
 } // namespace Resources

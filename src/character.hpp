@@ -22,12 +22,12 @@ class Character
 	int hp;
 	int max_hp;
 
-	// Hurt / Dead 
-	bool pending_removal;	   
-	bool dead_anim_playing;	   
-	float knockback_vel_x;	   
-	int hurt_frames_remaining; 
-	int hurt_frames_total;	   
+	// Hurt / Dead
+	bool pending_removal;
+	bool dead_anim_playing;
+	float knockback_vel_x;
+	int hurt_frames_remaining;
+	int hurt_frames_total;
 
   public:
 	Character(Vector2 pos);
@@ -35,15 +35,15 @@ class Character
 	virtual ~Character();
 
 	void draw();
-	
+
 	void load_texture(CharacterState texture_type, const char *filename, int total_frames);
-	
+
 	virtual void update(const Map &map) = 0;
-	
+
 	virtual void init() = 0;
-	
+
 	Vector2 get_position() const { return position; }
-	
+
 	void set_scale(float new_scale) { scale = new_scale; }
 
 	// Health API
@@ -60,5 +60,5 @@ class Character
 
 	bool is_removed() const { return pending_removal; }
 
-	
+	bool is_dead_anim_playing() const { return dead_anim_playing; }
 };

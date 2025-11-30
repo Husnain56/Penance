@@ -22,6 +22,8 @@ class Game
 	bool shouldExit;
 	Camera2D camera;
 	MainMenu mainMenu;
+	Texture2D winScreen;
+	Texture2D loseScreen;
 	Texture2D background;
 	GameState currentState;
 	DialogueBox dialogueBox;
@@ -35,11 +37,17 @@ class Game
 	void update_gameplay();
 	void update_dialogue();
 	void update_paused();
+	void update_game_win();
+	void update_game_over();
 
 	void draw_paused();
 	void draw_gameplay();
 	void draw_dialogue();
 	void draw_main_menu();
+	void draw_game_win();
+	void draw_game_over();
+
+	void reset_game();
 
   public:
 	Game();
