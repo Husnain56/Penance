@@ -1,7 +1,9 @@
 #include <blue_samurai.hpp>
 #include <constants.hpp>
+#include <dialogue.hpp>
 #include <karasu_tengu.hpp>
 #include <kitsune.hpp>
+#include <main_menu.hpp>
 #include <map.hpp>
 #include <player.hpp>
 #include <purple_knight.hpp>
@@ -17,12 +19,27 @@ class Game
   private:
 	Player player;
 	Map currentMap;
+	bool shouldExit;
 	Camera2D camera;
+	MainMenu mainMenu;
 	Texture2D background;
+	GameState currentState;
+	DialogueBox dialogueBox;
+	GameState previousState;
 	std::vector<Enemy *> enemies;
+	std::string storedDialogueFile;
 
 	void init_enemies();
 	void update_camera();
+	void update_main_menu();
+	void update_gameplay();
+	void update_dialogue();
+	void update_paused();
+
+	void draw_paused();
+	void draw_gameplay();
+	void draw_dialogue();
+	void draw_main_menu();
 
   public:
 	Game();

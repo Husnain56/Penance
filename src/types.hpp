@@ -18,3 +18,11 @@ enum CharacterState
 	STATE_ATTACK,
 	STATE_JUMP
 };
+
+enum GameState
+{
+	MAIN_MENU,
+	GAMEPLAY,
+	DIALOGUE,
+	PAUSED
+};
