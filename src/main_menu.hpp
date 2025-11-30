@@ -267,7 +267,7 @@ class MainMenu
 	}
 
 	// ========== DRAW FUNCTION ==========
-	void Draw(bool showDebug = true)
+	void Draw(bool showDebug = false)
 	{
 		if (!textureLoaded)
 		{
