@@ -1,24 +1,31 @@
 #include <game.hpp>
-#include <kitsune.hpp>
-#include <raylib.h>
 
 using namespace Resources;
 using namespace MapResource;
 using namespace MenuResource;
+using namespace IconResource;
 using namespace GameConstants;
 
 Game::Game() : currentMap(BASE_SPRITE_SCALE), player({200.0f, GROUND_Y - 200.0f})
 {
+	// Initialising Window
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Penance");
 	SetTargetFPS(60);
 	SetExitKey(0);
 
+	// Initialising Resources
 	background = LoadTexture(BACKGROUND_IMAGE.c_str());
 	currentMap.load_map(CASTLE_IMAGE, CASTLE_CSV);
-	player.init();
+	Image icon = LoadImage(ICON_IMAGE.c_str());
+	ImageFormat(&icon, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
+	SetWindowIcon(icon);
+	UnloadImage(icon);
 
+	// Initialising Characters
+	player.init();
 	init_enemies();
 
+	// Initialising Camera
 	camera = {0};
 	camera.zoom = 1.0f;
 	camera.offset = {(float)SCREEN_WIDTH * 0.38f, (float)SCREEN_HEIGHT * 0.75f};
@@ -76,7 +83,6 @@ void Game::update()
 	}
 }
 
-
 void Game::draw()
 {
 	BeginDrawing();
@@ -120,7 +126,7 @@ void Game::run()
 
 void Game::init_enemies()
 {
-	//// Add enemies here. They will automatically register to the static list via constructor.
+	// Setup Kitsune
 	Vector2 pos = {1000.0f, GROUND_Y};
 	Kitsune *kitsune = new Kitsune(pos);
 	kitsune->init();
@@ -206,17 +212,15 @@ void Game::update_gameplay()
 	player.update(currentMap);
 
 	// 2. Update Enemies (AI -> Physics -> Animation OR Hurt/Dead logic)
-	for (auto& enemy : enemies)
+	for (auto &enemy : enemies)
 		enemy->update(currentMap);
 
 	// 3. Cleanup Dead Enemies
-	// This removes enemies only AFTER they have finished their death animation
-	// (Character::process_state sets is_removed() to true when dead anim ends)
 	for (auto it = enemies.begin(); it != enemies.end();)
 	{
 		if ((*it)->is_removed())
 		{
-			delete* it;
+			delete *it;
 			it = enemies.erase(it);
 		}
 		else

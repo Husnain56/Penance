@@ -28,10 +28,10 @@ namespace Resources
 		inline const std::string BASE_PATH = "resources/player/";
 		inline const std::string RUN_TEXTURE = BASE_PATH + "run.png";
 		inline const std::string IDLE_TEXTURE = BASE_PATH + "idle.png";
-		inline const std::string ATTACK_TEXTURE = BASE_PATH + "attack_3.png";
 		inline const std::string JUMP_TEXTURE = BASE_PATH + "jump.png";
 		inline const std::string HURT_TEXTURE = BASE_PATH + "hurt.png";
 		inline const std::string DEAD_TEXTURE = BASE_PATH + "dead.png";
+		inline const std::string ATTACK_TEXTURE = BASE_PATH + "attack_3.png";
 
 		constexpr int RUN_FRAMES = 8;
 		constexpr int IDLE_FRAMES = 5;
@@ -46,10 +46,10 @@ namespace Resources
 		inline const std::string BASE_PATH = "resources/enemies/blue_samurai/";
 		inline const std::string RUN_TEXTURE = BASE_PATH + "run.png";
 		inline const std::string IDLE_TEXTURE = BASE_PATH + "idle.png";
-		inline const std::string ATTACK_TEXTURE = BASE_PATH + "attack.png";
 		inline const std::string JUMP_TEXTURE = BASE_PATH + "jump.png";
 		inline const std::string HURT_TEXTURE = BASE_PATH + "hurt.png";
 		inline const std::string DEAD_TEXTURE = BASE_PATH + "dead.png";
+		inline const std::string ATTACK_TEXTURE = BASE_PATH + "attack.png";
 
 		constexpr int RUN_FRAMES = 8;
 		constexpr int IDLE_FRAMES = 14;
@@ -64,16 +64,16 @@ namespace Resources
 		inline const std::string BASE_PATH = "resources/enemies/skeleton_warrior/";
 		inline const std::string RUN_TEXTURE = BASE_PATH + "run.png";
 		inline const std::string IDLE_TEXTURE = BASE_PATH + "idle.png";
-		inline const std::string ATTACK_TEXTURE = BASE_PATH + "run_attack.png";
 		inline const std::string HURT_TEXTURE = BASE_PATH + "hurt.png";
 		inline const std::string DEAD_TEXTURE = BASE_PATH + "dead.png";
+		inline const std::string ATTACK_TEXTURE = BASE_PATH + "run_attack.png";
 
 		constexpr int RUN_FRAMES = 8;
 		constexpr int IDLE_FRAMES = 7;
 		constexpr int ATTACK_FRAMES = 7;
 		constexpr int HURT_FRAMES = 2;
 		constexpr int DEAD_FRAMES = 4;
-	}
+	} // namespace SkeletonWarriorResource
 
 	namespace PurpleKnightResource
 	{
@@ -81,10 +81,10 @@ namespace Resources
 
 		inline const std::string RUN_TEXTURE = BASE_PATH + "run.png";
 		inline const std::string IDLE_TEXTURE = BASE_PATH + "idle.png";
-		inline const std::string ATTACK_TEXTURE = BASE_PATH + "run_attack.png";
 		inline const std::string JUMP_TEXTURE = BASE_PATH + "jump.png";
 		inline const std::string HURT_TEXTURE = BASE_PATH + "hurt.png";
 		inline const std::string DEAD_TEXTURE = BASE_PATH + "dead.png";
+		inline const std::string ATTACK_TEXTURE = BASE_PATH + "run_attack.png";
 
 		constexpr int RUN_FRAMES = 7;
 		constexpr int IDLE_FRAMES = 4;
@@ -92,17 +92,17 @@ namespace Resources
 		constexpr int JUMP_FRAMES = 6;
 		constexpr int HURT_FRAMES = 2;
 		constexpr int DEAD_FRAMES = 6;
-	}
+	} // namespace PurpleKnightResource
 	namespace SilverKnightResource
 	{
 		inline const std::string BASE_PATH = "resources/enemies/silver_knight/";
 
 		inline const std::string RUN_TEXTURE = BASE_PATH + "run.png";
 		inline const std::string IDLE_TEXTURE = BASE_PATH + "idle.png";
-		inline const std::string ATTACK_TEXTURE = BASE_PATH + "run_attack.png";
 		inline const std::string JUMP_TEXTURE = BASE_PATH + "jump.png";
 		inline const std::string HURT_TEXTURE = BASE_PATH + "hurt.png";
 		inline const std::string DEAD_TEXTURE = BASE_PATH + "dead.png";
+		inline const std::string ATTACK_TEXTURE = BASE_PATH + "run_attack.png";
 
 		constexpr int RUN_FRAMES = 7;
 		constexpr int IDLE_FRAMES = 4;
@@ -110,7 +110,7 @@ namespace Resources
 		constexpr int JUMP_FRAMES = 6;
 		constexpr int HURT_FRAMES = 2;
 		constexpr int DEAD_FRAMES = 6;
-	}	
+	} // namespace SilverKnightResource
 
 	namespace SkeletonSpearmanResource
 	{
@@ -118,27 +118,26 @@ namespace Resources
 
 		inline const std::string RUN_TEXTURE = BASE_PATH + "run.png";
 		inline const std::string IDLE_TEXTURE = BASE_PATH + "idle.png";
-		inline const std::string ATTACK_TEXTURE = BASE_PATH + "run_attack.png";
 		inline const std::string HURT_TEXTURE = BASE_PATH + "hurt.png";
 		inline const std::string DEAD_TEXTURE = BASE_PATH + "dead.png";
+		inline const std::string ATTACK_TEXTURE = BASE_PATH + "run_attack.png";
 
 		constexpr int RUN_FRAMES = 6;
 		constexpr int IDLE_FRAMES = 7;
 		constexpr int ATTACK_FRAMES = 5;
 		constexpr int HURT_FRAMES = 3;
 		constexpr int DEAD_FRAMES = 5;
-	}
+	} // namespace SkeletonSpearmanResource
 
 	namespace KarasuTenguResource
 	{
 		inline const std::string BASE_PATH = "resources/enemies/karasu_tengu/";
 		inline const std::string RUN_TEXTURE = BASE_PATH + "run.png";
 		inline const std::string IDLE_TEXTURE = BASE_PATH + "idle.png";
-		inline const std::string ATTACK_TEXTURE = BASE_PATH + "attack_1.png";
 		inline const std::string JUMP_TEXTURE = BASE_PATH + "jump.png";
 		inline const std::string HURT_TEXTURE = BASE_PATH + "hurt.png";
 		inline const std::string DEAD_TEXTURE = BASE_PATH + "dead.png";
-
+		inline const std::string ATTACK_TEXTURE = BASE_PATH + "attack_1.png";
 
 		constexpr int RUN_FRAMES = 8;
 		constexpr int IDLE_FRAMES = 6;
@@ -154,10 +153,10 @@ namespace Resources
 
 		inline const std::string RUN_TEXTURE = BASE_PATH + "run.png";
 		inline const std::string IDLE_TEXTURE = BASE_PATH + "idle.png";
-		inline const std::string ATTACK_TEXTURE = BASE_PATH + "attack_2.png";
 		inline const std::string HURT_TEXTURE = BASE_PATH + "hurt.png";
 		inline const std::string DEAD_TEXTURE = BASE_PATH + "dead.png";
-		
+		inline const std::string ATTACK_TEXTURE = BASE_PATH + "attack_2.png";
+
 		constexpr int RUN_FRAMES = 8;
 		constexpr int IDLE_FRAMES = 6;
 		constexpr int ATTACK_FRAMES = 6;
@@ -220,4 +219,10 @@ namespace Resources
 			= BASE_PATH + "imfell_englishsc_regular.ttf";
 		inline const std::string OFL_TXT = "ofl.txt";
 	} // namespace FontResource
+
+	namespace IconResource
+	{
+		inline const std::string BASE_PATH = "resources/icon/";
+		inline const std::string ICON_IMAGE = "icon.png";
+	} // namespace IconResource
 } // namespace Resources
