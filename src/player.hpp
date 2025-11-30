@@ -1,5 +1,5 @@
 #pragma once
-#include "character.hpp"
+#include <character.hpp>
 #include <vector>
 
 class Enemy; // forward
@@ -21,11 +21,11 @@ class Player : public Character
 
 	// Dash state
 	bool is_dashing;
-	int dash_frames_remaining;    // frames left in current dash
-	int dash_frames_total;        // frames per dash
-	int dash_cooldown_frames;     // frames between dashes
-	int dash_cooldown_timer;      // current cooldown counter (frames)
-	float dash_speed;             // pixels per frame during dash
+	int dash_frames_remaining; // frames left in current dash
+	int dash_frames_total;	   // frames per dash
+	int dash_cooldown_frames;  // frames between dashes
+	int dash_cooldown_timer;   // current cooldown counter (frames)
+	float dash_speed;		   // pixels per frame during dash
 
 	// bookkeeping for player's attack (legacy single-flag kept for safety)
 	bool attack_hit_registered;

@@ -1,6 +1,6 @@
-#include "map.hpp"
 #include <fstream>
 #include <iostream>
+#include <map.hpp>
 #include <sstream>
 
 Map::Map(float scale_factor)

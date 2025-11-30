@@ -1,13 +1,10 @@
-#include "enemy.hpp"
-#include "resources.hpp"
+#include <enemy.hpp>
+#include <resources.hpp>
 
 class Kitsune : public LongRangeEnemy
 {
   public:
-	Kitsune(Vector2 pos) : LongRangeEnemy(pos) 
-	{
-		scale = 1.2f;
-	}
+	Kitsune(Vector2 pos) : LongRangeEnemy(pos) { scale = 1.2f; }
 
 	void init() override
 	{

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "map.hpp"
-#include "types.hpp"
+#include <map.hpp>
+#include <types.hpp>
 
 class Character
 {

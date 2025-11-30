@@ -1,7 +1,7 @@
-#include "enemy.hpp"
-#include "constants.hpp"
-#include "player.hpp"
 #include <cmath>
+#include <constants.hpp>
+#include <enemy.hpp>
+#include <player.hpp>
 
 std::vector<Enemy *> Enemy::s_enemies;
 
@@ -127,7 +127,8 @@ void Enemy::update(const Map &map)
 			willFallOff = true;
 	}
 
-	// If blocked or would fall off, reverse facing and attempt a small nudge away to prevent sticking.
+	// If blocked or would fall off, reverse facing and attempt a small nudge away to prevent
+	// sticking.
 	if (blocked || willFallOff)
 	{
 		// When attacking, prefer to hold ground rather than roam away
@@ -142,8 +143,8 @@ void Enemy::update(const Map &map)
 			// If still blocked (rare), cancel horizontal move
 			int testLeft = (int)((desiredX + offX) / tileSize);
 			int testRight = (int)((desiredX + offX + hitW) / tileSize);
-			if ((moveX > 0.0f && map.get_tile_id(testRight, curBottomTile) > 0) ||
-				(moveX < 0.0f && map.get_tile_id(testLeft, curBottomTile) > 0))
+			if ((moveX > 0.0f && map.get_tile_id(testRight, curBottomTile) > 0)
+				|| (moveX < 0.0f && map.get_tile_id(testLeft, curBottomTile) > 0))
 			{
 				desiredX = prevX; // cancel
 			}
@@ -203,7 +204,8 @@ void Enemy::update(const Map &map)
 
 	if (velocity_y > 0.0f) // falling
 	{
-		bool hitMapFloor = (map.get_tile_id(leftTile, bottomTile) > 0 || map.get_tile_id(rightTile, bottomTile) > 0);
+		bool hitMapFloor = (map.get_tile_id(leftTile, bottomTile) > 0
+							|| map.get_tile_id(rightTile, bottomTile) > 0);
 		bool hitWorldFloor = (position.y >= GROUND_Y);
 
 		if (hitMapFloor || hitWorldFloor)

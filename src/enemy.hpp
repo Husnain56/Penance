@@ -1,10 +1,10 @@
 #pragma once
 
-#include "character.hpp"
-#include "constants.hpp"
-#include "player.hpp"
-#include <vector>
 #include <algorithm>
+#include <character.hpp>
+#include <constants.hpp>
+#include <player.hpp>
+#include <vector>
 
 class Player; // forward
 using namespace GameConstants;
@@ -22,12 +22,8 @@ class Enemy : public Character
 
 	// Register enemy on construction so other systems (player, AI) can find all enemies
 	Enemy(Vector2 pos)
-		: Character(pos),
-		  target_player(nullptr),
-		  attack_hit_registered(false),
-		  velocity_y(0.0f),
-		  ai_state(AIState::ROAM),
-		  patrol_speed(MOVEMENT_SPEED)
+		: Character(pos), target_player(nullptr), attack_hit_registered(false), velocity_y(0.0f),
+		  ai_state(AIState::ROAM), patrol_speed(MOVEMENT_SPEED)
 	{
 		s_enemies.push_back(this);
 	}
@@ -77,7 +73,6 @@ class Enemy : public Character
 		// default does nothing special; update() will handle animations / hits
 	}
 
-
 	// Tuning parameters for AI (protected so child classes can tweak in ctor)
 	float patrol_speed;
 	float chase_speed;
@@ -107,12 +102,10 @@ class Enemy : public Character
 	static std::vector<Enemy *> s_enemies;
 };
 
-
 class LongRangeEnemy : public Enemy
 {
-public:
-	LongRangeEnemy(Vector2 pos)
-		: Enemy(pos)
+  public:
+	LongRangeEnemy(Vector2 pos) : Enemy(pos)
 	{
 		set_aggro_range(400.0f);
 		set_attack_range(300.0f);
@@ -124,9 +117,8 @@ public:
 
 class ShortRangeEnemy : public Enemy
 {
-public:
-	ShortRangeEnemy(Vector2 pos)
-		: Enemy(pos)
+  public:
+	ShortRangeEnemy(Vector2 pos) : Enemy(pos)
 	{
 		set_aggro_range(600.0f);
 		set_attack_range(70.0f);
@@ -136,4 +128,6 @@ public:
 	}
 };
 
-class MainVillain : public Enemy{};
+class MainVillain : public Enemy
+{
+};

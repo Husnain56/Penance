@@ -17,11 +17,11 @@ namespace GameConstants
 	constexpr int ACTION_FRAME_RATE = 4;
 
 	// Gameplay tuning
-	constexpr int PLAYER_ATTACK_DAMAGE = 40;     // player deals more damage
-	constexpr int ENEMY_ATTACK_DAMAGE = 15;      // enemy damage
+	constexpr int PLAYER_ATTACK_DAMAGE = 40;	  // player deals more damage
+	constexpr int ENEMY_ATTACK_DAMAGE = 15;		  // enemy damage
 	constexpr float PLAYER_ATTACK_RANGE = 140.0f; // larger, forgiving range
-	constexpr float ENEMY_AGGRO_RANGE = 480.0f;  // enemy aggro range
-	constexpr float ENEMY_ATTACK_RANGE = 64.0f;  // melee range for enemy
+	constexpr float ENEMY_AGGRO_RANGE = 480.0f;	  // enemy aggro range
+	constexpr float ENEMY_ATTACK_RANGE = 64.0f;	  // melee range for enemy
 
 	// Separate frame rates for attack animations (higher => faster)
 	constexpr int PLAYER_ATTACK_FRAME_RATE = 12;

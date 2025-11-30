@@ -1,9 +1,9 @@
-#include "player.hpp"
-#include "enemy.hpp"
-#include "constants.hpp"
-#include "resources.hpp"
-#include <cmath>
 #include <algorithm>
+#include <cmath>
+#include <constants.hpp>
+#include <enemy.hpp>
+#include <player.hpp>
+#include <resources.hpp>
 
 Player::Player(Vector2 pos) : Character(pos)
 {
@@ -19,10 +19,10 @@ Player::Player(Vector2 pos) : Character(pos)
 
 	// Dash defaults: adjust to taste
 	is_dashing = false;
-	dash_frames_total = 10;        // number of frames dash lasts
+	dash_frames_total = 10; // number of frames dash lasts
 	dash_frames_remaining = 0;
-	dash_speed = 30.0f;           // pixels per frame -> dash distance ~ dash_speed * dash_frames_total
-	dash_cooldown_frames = 30;    // cooldown in frames (~0.5s at 60FPS)
+	dash_speed = 30.0f;		   // pixels per frame -> dash distance ~ dash_speed * dash_frames_total
+	dash_cooldown_frames = 30; // cooldown in frames (~0.5s at 60FPS)
 	dash_cooldown_timer = 0;
 }
 
@@ -197,8 +197,8 @@ void Player::update(const Map &map)
 	bottomTile = (int)((position.y + offY + hitH) / tileSize);
 
 	// Determine grounded (reliable)
-	bool hitMapFloor = (map.get_tile_id(leftTile, bottomTile) > 0
-						|| map.get_tile_id(rightTile, bottomTile) > 0);
+	bool hitMapFloor
+		= (map.get_tile_id(leftTile, bottomTile) > 0 || map.get_tile_id(rightTile, bottomTile) > 0);
 	bool hitWorldFloor = (position.y >= GROUND_Y);
 	bool on_ground = false;
 
@@ -254,8 +254,8 @@ void Player::update(const Map &map)
 	{
 		current_state = STATE_ATTACK;
 		is_attacking = true;
-		attack_hit_enemies.clear();           // clear per-attack hit list
-		attack_hit_registered = false;        // legacy flag
+		attack_hit_enemies.clear();	   // clear per-attack hit list
+		attack_hit_registered = false; // legacy flag
 		attack_anim.curr_frame = 0;
 		attack_anim.frame_counter = 0;
 	}
@@ -292,10 +292,12 @@ void Player::update(const Map &map)
 			}
 		}
 
-		// --- LOOSENED HIT: any enemy inside effective range at ANY frame during attack gets hit (once) ---
+		// --- LOOSENED HIT: any enemy inside effective range at ANY frame during attack gets hit
+		// (once) ---
 		{
 			const float baseRange = PLAYER_ATTACK_RANGE * (scale / 2.5f);
-			const float speedBonus = std::fabs(velocity_x) * 6.0f + (is_dashing ? dash_speed * 0.9f : 0.0f);
+			const float speedBonus
+				= std::fabs(velocity_x) * 6.0f + (is_dashing ? dash_speed * 0.9f : 0.0f);
 			const float effectiveRange = baseRange + speedBonus;
 			const int dmg = PLAYER_ATTACK_DAMAGE;
 
@@ -305,7 +307,8 @@ void Player::update(const Map &map)
 					continue;
 
 				// skip if already hit this attack
-				if (std::find(attack_hit_enemies.begin(), attack_hit_enemies.end(), e) != attack_hit_enemies.end())
+				if (std::find(attack_hit_enemies.begin(), attack_hit_enemies.end(), e)
+					!= attack_hit_enemies.end())
 					continue;
 
 				Vector2 myPos = get_position();
@@ -322,7 +325,8 @@ void Player::update(const Map &map)
 				{
 					e->take_damage(dmg);
 
-					// If enemy died from this hit, heal the player by 20 hp (cap enforced in Character::heal)
+					// If enemy died from this hit, heal the player by 20 hp (cap enforced in
+					// Character::heal)
 					if (!e->is_alive())
 					{
 						this->heal(20);
