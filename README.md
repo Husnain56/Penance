@@ -90,4 +90,4 @@ We do not use the command line on Windows. Use your preferred Editor/IDE.
 
   * **Language:** C++17
   * **Graphics/Audio:** raylib 5.5
-  * **Build System:** CMake.
+  * **Build System:** CMake
