@@ -25,6 +25,7 @@ class Game
 	Texture2D winScreen;
 	Texture2D loseScreen;
 	Texture2D background;
+	Music backgroundMusic;
 	GameState currentState;
 	DialogueBox dialogueBox;
 	GameState previousState;

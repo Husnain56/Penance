@@ -233,4 +233,10 @@ namespace Resources
 		inline const std::string LOSE_SCREEN = BASE_PATH + "lose_screen.png";
 		inline const std::string WIN_SCREEN = BASE_PATH + "win_screen.png";
 	} // namespace EndScreen
+
+	namespace MusicResource
+	{
+		inline const std::string BASE_PATH = "resources/music/";
+		inline const std::string BACKGROUND_MUSIC = BASE_PATH + "background_music.mp3";
+	} // namespace MusicResource
 } // namespace Resources

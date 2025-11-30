@@ -6,15 +6,19 @@ using namespace MapResource;
 using namespace MenuResource;
 using namespace IconResource;
 using namespace GameConstants;
+using namespace MusicResource;
 
 Game::Game() : currentMap(BASE_SPRITE_SCALE), player({200.0f, GROUND_Y - 200.0f})
 {
 	// Initialising Window
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Penance");
+	InitAudioDevice();
 	SetTargetFPS(60);
 	SetExitKey(0);
 
 	// Initialising Resources
+	backgroundMusic = LoadMusicStream(BACKGROUND_MUSIC.c_str());
+	PlayMusicStream(backgroundMusic);
 	loseScreen = LoadTexture(LOSE_SCREEN.c_str());
 	winScreen = LoadTexture(WIN_SCREEN.c_str());
 	background = LoadTexture(BACKGROUND_IMAGE.c_str());
@@ -52,14 +56,17 @@ Game::~Game()
 
 	enemies.clear();
 
+	UnloadMusicStream(backgroundMusic);
 	UnloadTexture(background);
 	UnloadTexture(loseScreen);
 	UnloadTexture(winScreen);
+	CloseAudioDevice();
 	CloseWindow();
 }
 
 void Game::update()
 {
+	UpdateMusicStream(backgroundMusic);
 	switch (currentState)
 	{
 		case MAIN_MENU:
