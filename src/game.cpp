@@ -5,6 +5,7 @@ using namespace EndScreen;
 using namespace MapResource;
 using namespace MenuResource;
 using namespace IconResource;
+using namespace FontResource;
 using namespace GameConstants;
 using namespace MusicResource;
 
@@ -17,6 +18,7 @@ Game::Game() : currentMap(BASE_SPRITE_SCALE), player({200.0f, GROUND_Y - 200.0f}
 	SetExitKey(0);
 
 	// Initialising Resources
+	font = LoadFont(IMFELL_ENGLISHSC_REGULAR.c_str());
 	backgroundMusic = LoadMusicStream(BACKGROUND_MUSIC.c_str());
 	PlayMusicStream(backgroundMusic);
 	loseScreen = LoadTexture(LOSE_SCREEN.c_str());
@@ -56,6 +58,7 @@ Game::~Game()
 
 	enemies.clear();
 
+	UnloadFont(font);
 	UnloadMusicStream(backgroundMusic);
 	UnloadTexture(background);
 	UnloadTexture(loseScreen);
@@ -397,7 +400,12 @@ void Game::draw_gameplay()
 	EndMode2D();
 
 	DrawFPS(10, 20);
-	DrawText("Press T for dialogue | ESC to pause", 700, 100, 20, LIGHTGRAY);
+
+	// --- CENTERED TEXT ---
+	const char *text = "Press T for dialogue | ESC to pause";
+	float fontSize = 30; // Increased size
+	Vector2 textSize = MeasureTextEx(font, text, fontSize, 2);
+	DrawTextEx(font, text, {(SCREEN_WIDTH - textSize.x) / 2, 100}, fontSize, 2, LIGHTGRAY);
 }
 
 void Game::draw_dialogue()
@@ -406,8 +414,18 @@ void Game::draw_dialogue()
 	if (previousState == GAMEPLAY)
 	{
 		ClearBackground(DARKBLUE);
-		DrawText("GAMEPLAY", 850, 50, 40, WHITE);
-		DrawText("Press T for dialogue | ESC to pause", 700, 100, 20, LIGHTGRAY);
+
+		// --- CENTERED TITLE ---
+		const char *title = "GAMEPLAY";
+		float titleSize = 80;
+		Vector2 titleDim = MeasureTextEx(font, title, titleSize, 2);
+		DrawTextEx(font, title, {(SCREEN_WIDTH - titleDim.x) / 2, 50}, titleSize, 2, GRAY);
+
+		// --- CENTERED HINT ---
+		const char *hint = "Press T for dialogue | ESC to pause";
+		float hintSize = 30;
+		Vector2 hintDim = MeasureTextEx(font, hint, hintSize, 2);
+		DrawTextEx(font, hint, {(SCREEN_WIDTH - hintDim.x) / 2, 150}, hintSize, 2, LIGHTGRAY);
 	}
 	else if (previousState == MAIN_MENU)
 	{
@@ -425,8 +443,18 @@ void Game::draw_paused()
 
 	// Pause overlay
 	DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.7f));
-	DrawText("PAUSED", 850, 450, 60, WHITE);
-	DrawText("ESC - Resume | M - Main Menu", 720, 550, 25, GRAY);
+
+	// --- CENTERED TITLE ---
+	const char *title = "PAUSED";
+	float titleSize = 80;
+	Vector2 titleDim = MeasureTextEx(font, title, titleSize, 2);
+	DrawTextEx(font, title, {(SCREEN_WIDTH - titleDim.x) / 2, 450}, titleSize, 2, GRAY);
+
+	// --- CENTERED SUBTITLE ---
+	const char *subtitle = "ESC - Resume | M - Main Menu";
+	float subSize = 40;
+	Vector2 subDim = MeasureTextEx(font, subtitle, subSize, 2);
+	DrawTextEx(font, subtitle, {(SCREEN_WIDTH - subDim.x) / 2, 550}, subSize, 2, LIGHTGRAY);
 }
 
 void Game::draw_game_win()
@@ -437,8 +465,16 @@ void Game::draw_game_win()
 
 	DrawTexturePro(winScreen, src, dst, {0, 0}, 0, WHITE);
 
-	DrawText("Press ENTER to return to Main Menu", 600, 850, 30, WHITE);
-	DrawText("Press ESC to quit", 820, 900, 20, GRAY);
+	// --- CENTERED INSTRUCTIONS ---
+	const char *text1 = "Press ENTER to replay";
+	float size1 = 40;
+	Vector2 dim1 = MeasureTextEx(font, text1, size1, 2);
+	DrawTextEx(font, text1, {(SCREEN_WIDTH - dim1.x) / 2, 850}, size1, 2, GRAY);
+
+	const char *text2 = "Press ESC to quit";
+	float size2 = 30;
+	Vector2 dim2 = MeasureTextEx(font, text2, size2, 2);
+	DrawTextEx(font, text2, {(SCREEN_WIDTH - dim2.x) / 2, 900}, size2, 2, GRAY);
 }
 
 void Game::draw_game_over()
@@ -449,8 +485,16 @@ void Game::draw_game_over()
 
 	DrawTexturePro(loseScreen, src, dst, {0, 0}, 0, WHITE);
 
-	DrawText("Press ENTER to return to Main Menu", 600, 850, 30, WHITE);
-	DrawText("Press ESC to quit", 820, 900, 20, GRAY);
+	// --- CENTERED INSTRUCTIONS ---
+	const char *text1 = "Press ENTER to replay";
+	float size1 = 40;
+	Vector2 dim1 = MeasureTextEx(font, text1, size1, 2);
+	DrawTextEx(font, text1, {(SCREEN_WIDTH - dim1.x) / 2, 850}, size1, 2, GRAY);
+
+	const char *text2 = "Press ESC to quit";
+	float size2 = 30;
+	Vector2 dim2 = MeasureTextEx(font, text2, size2, 2);
+	DrawTextEx(font, text2, {(SCREEN_WIDTH - dim2.x) / 2, 900}, size2, 2, GRAY);
 }
 
 void Game::reset_game()

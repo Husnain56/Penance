@@ -17,6 +17,7 @@
 class Game
 {
   private:
+	Font font;
 	Player player;
 	Map currentMap;
 	bool shouldExit;
