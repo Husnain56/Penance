@@ -20,3 +20,11 @@ enum CharacterState
 	STATE_HURT, 
 	STATE_DEAD
 };
+
+enum GameState
+{
+	MAIN_MENU,
+	GAMEPLAY,
+	DIALOGUE,
+	PAUSED
+};

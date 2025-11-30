@@ -1,7 +1,9 @@
 #pragma once
 
 #include <raylib.h>
+#include <resources.hpp>
 #include <string>
+using namespace Resources::MenuResource;
 
 class MainMenu
 {
@@ -143,7 +145,7 @@ class MainMenu
 
 		DrawText("Built with Raylib", 830, yPos, 22, DARKGRAY);
 		yPos += 40;
-		DrawText("© 2024 - All Rights Reserved", 800, yPos, 20, GRAY);
+		DrawText("© 2025 - All Rights Reserved", 800, yPos, 20, GRAY);
 
 		// Back button
 		DrawRectangleRec(closeButton, GOLD);
@@ -186,7 +188,7 @@ class MainMenu
 		// Load background texture
 		if (!textureLoaded)
 		{
-			menuBackground = LoadTexture("Resources/mainmenu/mainmenu.png");
+			menuBackground = LoadTexture(MAIN_MENU_IMAGE.c_str());
 			textureLoaded = (menuBackground.id != 0);
 			if (!textureLoaded)
 			{
@@ -197,7 +199,7 @@ class MainMenu
 		// Load overlay texture with transparency
 		if (!overlayLoaded)
 		{
-			Image menuImg = LoadImage("Resources/mainmenu/menu.png");
+			Image menuImg = LoadImage(MENU_IMAGE.c_str());
 			if (menuImg.data != nullptr)
 			{
 				// Replace black with transparent

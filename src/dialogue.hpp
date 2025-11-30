@@ -4,9 +4,14 @@
 #include <list>
 #include <map>
 #include <raylib.h>
+#include <resources.hpp>
 #include <sstream>
 #include <string>
 using namespace std;
+using namespace Resources::FontResource;
+using namespace Resources::AvatarResource;
+using namespace Resources::DialogueResource;
+using namespace Resources::DialogueBoxResource;
 
 // ============================================================
 // STRUCTS & CLASSES
@@ -133,15 +138,15 @@ class DialogueParser
 
 				// Set avatar path
 				if (currentSpeaker == "MC")
-					avatarPath = "resources/Avatars/knight.png";
+					avatarPath = KNIGHT_IMAGE;
 				else if (currentSpeaker == "Kaelen")
-					avatarPath = "resources/Avatars/Kaelen.png";
+					avatarPath = KAELEN_IMAGE;
 				else if (currentSpeaker == "Alistair")
-					avatarPath = "resources/Avatars/Alistair.png";
+					avatarPath = ALISTAIR_IMAGE;
 				else if (currentSpeaker == "Edric")
-					avatarPath = "resources/Avatars/Edric.png";
+					avatarPath = EDRIC_IMAGE;
 				else
-					avatarPath = "resources/Avatars/unknown.png";
+					avatarPath = UNKNOWN_IMAGE;
 
 				readingDialogue = true;
 			}
@@ -346,12 +351,12 @@ class DialogueBox
 	{
 		if (!fontLoaded)
 		{
-			font = LoadFont("resources/Font/IMFellEnglishSC-Regular.ttf");
+			font = LoadFont(IMFELL_ENGLISHSC_REGULAR.c_str());
 			fontLoaded = true;
 		}
 		if (!boxTextureLoaded)
 		{
-			boxTexture = LoadTexture("resources/DialogueBox/DB.png");
+			boxTexture = LoadTexture(DB_IMAGE.c_str());
 			boxTextureLoaded = true;
 		}
 	}
