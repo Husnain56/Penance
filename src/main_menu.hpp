@@ -63,96 +63,107 @@ class MainMenu
 		return CheckCollisionPointRec(mousePos, rect);
 	}
 
-	// ========== POPUP DRAWING FUNCTIONS ==========
+	// =====================================================================
+	//                         OPTIONS POPUP (NAVY BLUE)
+	// =====================================================================
 	void DrawOptionsMenu()
 	{
-		// Dark overlay
+		// Dark overlay behind popup
 		DrawRectangle(0, 0, 1920, 1080, Fade(BLACK, 0.7f));
 
-		// Popup box
 		Rectangle popupBox = {POPUP_X, POPUP_Y, POPUP_WIDTH, POPUP_HEIGHT};
-		DrawRectangleRec(popupBox, WHITE);
-		DrawRectangleRec(popupBox, Fade(DARKPURPLE, 0.2f));
-		DrawRectangleLinesEx(popupBox, POPUP_BORDER_THICKNESS, DARKPURPLE);
+
+		Color navy = Color{10, 25, 70, 255};
+		Color navyLight = Color{40, 80, 160, 255};
+		Color textWhite = Color{235, 235, 245, 255};
+
+		// Navy popup background
+		DrawRectangleRec(popupBox, navy);
+		DrawRectangleLinesEx(popupBox, POPUP_BORDER_THICKNESS, navyLight);
 
 		// Title
-		DrawText("HOW TO PLAY", 820, TITLE_Y, 40, DARKPURPLE);
-		DrawLine(550, 290, 1370, 290, DARKPURPLE);
+		DrawText("HOW TO PLAY", 820, TITLE_Y, 40, textWhite);
+		DrawLine(550, 290, 1370, 290, navyLight);
 
 		// Content
 		int yPos = CONTENT_START_Y;
 
-		DrawText("CONTROLS:", 550, yPos, 30, DARKGRAY);
+		DrawText("CONTROLS:", 550, yPos, 30, textWhite);
 		yPos += LINE_SPACING;
-		DrawText("- ENTER: Advance dialogue", 570, yPos, 25, BLACK);
-		DrawText("- 1-9: Select dialogue choices", 950, yPos, 25, BLACK);
+		DrawText("- ENTER: Advance dialogue", 570, yPos, 25, textWhite);
+		DrawText("- 1-9: Select dialogue choices", 950, yPos, 25, textWhite);
 		yPos += LINE_SPACING;
-		DrawText("- WASD: Move", 570, yPos, 25, BLACK);
-		DrawText("- Spacebar: Jump", 950, yPos, 25, BLACK);
+		DrawText("- WASD: Move", 570, yPos, 25, textWhite);
+		DrawText("- Spacebar: Jump", 950, yPos, 25, textWhite);
 		yPos += LINE_SPACING;
-		DrawText("- E: Attack", 570, yPos, 25, BLACK);
-		DrawText("- ESC: Pause game", 950, yPos, 25, BLACK);
+		DrawText("- E: Attack", 570, yPos, 25, textWhite);
+		DrawText("- ESC: Pause game", 950, yPos, 25, textWhite);
+
 		yPos += SECTION_SPACING;
-		DrawText("GAMEPLAY:", 550, yPos, 30, DARKGRAY);
+		DrawText("GAMEPLAY:", 550, yPos, 30, textWhite);
 		yPos += LINE_SPACING;
-		DrawText("- Read dialogues and make choices", 570, yPos, 25, BLACK);
+		DrawText("- Read dialogues and make choices", 570, yPos, 25, textWhite);
 		yPos += LINE_SPACING;
-		DrawText("- Your choices affect the story", 570, yPos, 25, BLACK);
+		DrawText("- Your choices affect the story", 570, yPos, 25, textWhite);
 		yPos += LINE_SPACING;
-		DrawText("- Explore different paths", 570, yPos, 25, BLACK);
+		DrawText("- Explore different paths", 570, yPos, 25, textWhite);
 
 		// Back button
-		DrawRectangleRec(closeButton, DARKPURPLE);
+		DrawRectangleRec(closeButton, navyLight);
 		DrawText("BACK", closeButton.x + 5, closeButton.y + 12, 25, WHITE);
-		DrawText("Click BACK to return to main menu", 750, 830, 20, DARKGRAY);
+		DrawText("Click BACK to return to main menu", 750, 830, 20, textWhite);
 	}
 
+	// =====================================================================
+	//                         CREDITS POPUP (NAVY BLUE)
+	// =====================================================================
 	void DrawCreditsMenu()
 	{
-		// Dark overlay
 		DrawRectangle(0, 0, 1920, 1080, Fade(BLACK, 0.7f));
 
-		// Popup box
 		Rectangle popupBox = {POPUP_X, POPUP_Y, POPUP_WIDTH, POPUP_HEIGHT};
-		DrawRectangleRec(popupBox, WHITE);
-		DrawRectangleRec(popupBox, Fade(GOLD, 0.1f));
-		DrawRectangleLinesEx(popupBox, POPUP_BORDER_THICKNESS, GOLD);
 
-		// Title
-		DrawText("CREDITS", 880, TITLE_Y, 40, DARKGRAY);
-		DrawLine(550, 290, 1370, 290, GOLD);
+		Color navy = Color{10, 25, 70, 255};
+		Color royalBlue = Color{60, 110, 220, 255};
+		Color textWhite = Color{235, 235, 245, 255};
+		Color gold = Color{220, 185, 40, 255};
 
-		// Content
+		// Navy popup background
+		DrawRectangleRec(popupBox, navy);
+		DrawRectangleLinesEx(popupBox, POPUP_BORDER_THICKNESS, royalBlue);
+
+		DrawText("CREDITS", 880, TITLE_Y, 40, textWhite);
+		DrawLine(550, 290, 1370, 290, royalBlue);
+
 		int yPos = 360;
 		const int creditSpacing = 60;
 
-		DrawText("DEVELOPMENT TEAM", 800, yPos, 30, DARKGRAY);
+		DrawText("DEVELOPMENT TEAM", 800, yPos, 30, textWhite);
 		yPos += creditSpacing + 20;
 
-		DrawText("Game Mechanic Designer", 650, yPos, 25, GOLD);
-		DrawText("Eesa Shoaib && Ahsan Baig", 1050, yPos, 25, BLACK);
+		DrawText("Game Mechanic Designer", 650, yPos, 25, gold);
+		DrawText("Eesa Shoaib && Ahsan Baig", 1050, yPos, 25, textWhite);
 		yPos += creditSpacing;
 
-		DrawText("Map Designer", 650, yPos, 25, GOLD);
-		DrawText("Husnain Barkat", 1050, yPos, 25, BLACK);
+		DrawText("Map Designer", 650, yPos, 25, gold);
+		DrawText("Husnain Barkat", 1050, yPos, 25, textWhite);
 		yPos += creditSpacing;
 
-		DrawText("Story Writer", 650, yPos, 25, GOLD);
-		DrawText("Abdullah Mushtaq", 1050, yPos, 25, BLACK);
+		DrawText("Story Writer", 650, yPos, 25, gold);
+		DrawText("Abdullah Mushtaq", 1050, yPos, 25, textWhite);
 		yPos += creditSpacing;
 
-		DrawText("Artist", 650, yPos, 25, GOLD);
-		DrawText("Harris Tabassum", 1050, yPos, 25, BLACK);
+		DrawText("Director", 650, yPos, 25, gold);
+		DrawText("Harris Tabassum", 1050, yPos, 25, textWhite);
 		yPos += creditSpacing + 30;
 
-		DrawText("Built with Raylib", 830, yPos, 22, DARKGRAY);
+		DrawText("Built with Raylib", 830, yPos, 22, textWhite);
 		yPos += 40;
-		DrawText("© 2025 - All Rights Reserved", 800, yPos, 20, GRAY);
+		DrawText("© 2025 - All Rights Reserved", 800, yPos, 20, textWhite);
 
-		// Back button
-		DrawRectangleRec(closeButton, GOLD);
+		DrawRectangleRec(closeButton, royalBlue);
 		DrawText("BACK", closeButton.x + 5, closeButton.y + 12, 25, WHITE);
-		DrawText("Click BACK to return to main menu", 750, 830, 20, DARKGRAY);
+		DrawText("Click BACK to return to main menu", 750, 830, 20, textWhite);
 	}
 
   public:
@@ -161,17 +172,14 @@ class MainMenu
 		: textureLoaded(false), overlayLoaded(false), startClicked(false), optionsClicked(false),
 		  creditsClicked(false), exitClicked(false), showOptionsMenu(false), showCreditsMenu(false)
 	{
-
 		menuBackground = {0};
 		menuOverlay = {0};
 
-		// Button positions (x, y, width, height)
 		startButton = {860.0f, 580.0f, 290.0f, 70.0f};
 		optionsButton = {880.0f, 740.0f, 250.0f, 60.0f};
 		creditsButton = {880.0f, 800.0f, 250.0f, 60.0f};
 		exitButton = {910.0f, 880.0f, 150.0f, 70.0f};
 
-		// Close button for popups
 		closeButton = {910.0f, 850.0f, 100.0f, 50.0f};
 	}
 
@@ -187,24 +195,17 @@ class MainMenu
 	// ========== INITIALIZATION ==========
 	void Initialize()
 	{
-		// Load background texture
 		if (!textureLoaded)
 		{
 			menuBackground = LoadTexture(MAIN_MENU_IMAGE.c_str());
 			textureLoaded = (menuBackground.id != 0);
-			if (!textureLoaded)
-			{
-				printf("Failed to load main menu texture!\n");
-			}
 		}
 
-		// Load overlay texture with transparency
 		if (!overlayLoaded)
 		{
 			Image menuImg = LoadImage(MENU_IMAGE.c_str());
-			if (menuImg.data != nullptr)
+			if (menuImg.data)
 			{
-				// Replace black with transparent
 				Color black = {0, 0, 0, 255};
 				Color transparent = {0, 0, 0, 0};
 				ImageColorReplace(&menuImg, black, transparent);
@@ -213,28 +214,15 @@ class MainMenu
 				UnloadImage(menuImg);
 
 				overlayLoaded = (menuOverlay.id != 0);
-				if (!overlayLoaded)
-				{
-					printf("Failed to create menu overlay texture!\n");
-				}
-			}
-			else
-			{
-				printf("Failed to load menu overlay image!\n");
 			}
 		}
 	}
 
-	// ========== UPDATE LOGIC ==========
+	// ========== UPDATE ==========
 	void Update()
 	{
-		// Reset click states
-		startClicked = false;
-		optionsClicked = false;
-		creditsClicked = false;
-		exitClicked = false;
+		startClicked = optionsClicked = creditsClicked = exitClicked = false;
 
-		// Handle submenu close button
 		if (showOptionsMenu || showCreditsMenu)
 		{
 			if (IsRectangleClicked(closeButton))
@@ -242,14 +230,11 @@ class MainMenu
 				showOptionsMenu = false;
 				showCreditsMenu = false;
 			}
-			return; // Don't process other buttons while submenu is open
+			return;
 		}
 
-		// Check main menu buttons
 		if (IsRectangleClicked(startButton))
-		{
 			startClicked = true;
-		}
 		if (IsRectangleClicked(optionsButton))
 		{
 			optionsClicked = true;
@@ -261,41 +246,34 @@ class MainMenu
 			showCreditsMenu = true;
 		}
 		if (IsRectangleClicked(exitButton))
-		{
 			exitClicked = true;
-		}
 	}
 
-	// ========== DRAW FUNCTION ==========
+	// ========== DRAW ==========
 	void Draw(bool showDebug = false)
 	{
 		if (!textureLoaded)
 		{
-			// Fallback display
 			ClearBackground(BLACK);
 			DrawText("MAIN MENU", 810, 400, 60, WHITE);
 			DrawText("(Background image failed to load)", 700, 500, 20, RED);
 			return;
 		}
 
-		// Draw background
 		Rectangle bgSource = {0, 0, (float)menuBackground.width, (float)menuBackground.height};
 		Rectangle bgDest = {0, 0, 1920, 1080};
 		DrawTexturePro(menuBackground, bgSource, bgDest, {0, 0}, 0.0f, WHITE);
 
-		// Draw overlay
 		if (overlayLoaded)
 		{
 			Rectangle overlaySource = {0, 0, (float)menuOverlay.width, (float)menuOverlay.height};
-
 			float overlayX = (1920 - MENU_OVERLAY_WIDTH) / 2 + MENU_OVERLAY_OFFSET_X;
 			float overlayY = (1080 - MENU_OVERLAY_HEIGHT) / 2 + MENU_OVERLAY_OFFSET_Y;
-
 			Rectangle overlayDest = {overlayX, overlayY, MENU_OVERLAY_WIDTH, MENU_OVERLAY_HEIGHT};
+
 			DrawTexturePro(menuOverlay, overlaySource, overlayDest, {0, 0}, 0.0f, WHITE);
 		}
 
-		// Draw debug rectangles
 		if (showDebug && !showOptionsMenu && !showCreditsMenu)
 		{
 			if (IsRectangleHovered(startButton))
@@ -308,7 +286,6 @@ class MainMenu
 				DrawRectangleRec(exitButton, Fade(RED, 0.3f));
 		}
 
-		// Draw submenus
 		if (showOptionsMenu)
 			DrawOptionsMenu();
 		if (showCreditsMenu)
