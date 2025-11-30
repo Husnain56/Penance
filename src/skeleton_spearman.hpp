@@ -8,7 +8,7 @@ class SkeletonSpearman : public ShortRangeEnemy
 	SkeletonSpearman(Vector2 pos) : ShortRangeEnemy(pos)
 	{
 		set_scale(1.5f);
-		this->set_attack_damage(5);
+		this->set_attack_damage(10);
 		this->chase_speed = 15.0f;
 		this->draw_offset = {0.0f, -80.0f};
 		this->max_hp = 80;
@@ -20,5 +20,7 @@ class SkeletonSpearman : public ShortRangeEnemy
 		load_texture(STATE_RUN, RUN_TEXTURE.c_str(), RUN_FRAMES);
 		load_texture(STATE_IDLE, IDLE_TEXTURE.c_str(), IDLE_FRAMES);
 		load_texture(STATE_ATTACK, ATTACK_TEXTURE.c_str(), ATTACK_FRAMES);
+		load_texture(STATE_HURT, HURT_TEXTURE.c_str(), HURT_FRAMES);
+		load_texture(STATE_DEAD, DEAD_TEXTURE.c_str(), DEAD_FRAMES);
 	}
 };

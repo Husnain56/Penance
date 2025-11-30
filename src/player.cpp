@@ -34,12 +34,25 @@ void Player::init()
 	load_texture(STATE_IDLE, IDLE_TEXTURE.c_str(), IDLE_FRAMES);
 	load_texture(STATE_ATTACK, ATTACK_TEXTURE.c_str(), ATTACK_FRAMES);
 	load_texture(STATE_JUMP, JUMP_TEXTURE.c_str(), JUMP_FRAMES);
+	load_texture(STATE_HURT, HURT_TEXTURE.c_str(), HURT_FRAMES);
+	load_texture(STATE_DEAD, DEAD_TEXTURE.c_str(), DEAD_FRAMES);
 }
 
 void Player::update(const Map &map)
 {
 	using namespace GameConstants;
 	float tileSize = map.get_tile_size();
+
+	if (is_removed())
+		return;
+
+	// If currently playing dead animation OR hurt state is active, let base class progress it and skip gameplay logic.
+	// process_state handles the dead animation, transition, and hurt knockback/anim.
+	if (current_state == STATE_DEAD || current_state == STATE_HURT)
+	{
+		process_state();
+		return; // Skip all input, movement, attack, jump, dash logic.
+	}
 
 	// reduce dash cooldown timer (frame-based)
 	if (dash_cooldown_timer > 0)
@@ -261,7 +274,8 @@ void Player::update(const Map &map)
 	}
 
 	// --- 5. ANIMATION STATE ---
-	if (!is_jumping && !is_attacking)
+	// Do not override hurt state if it is active.
+	if (!is_jumping && !is_attacking && current_state != STATE_HURT)
 	{
 		if (std::fabs(velocity_x) > 0.5f)
 			current_state = STATE_RUN;
@@ -371,4 +385,7 @@ void Player::update(const Map &map)
 			idle_anim.frame_rec.x = (float)idle_anim.curr_frame * idle_anim.frame_width;
 		}
 	}
+
+	// Let Character handle hurt/dead progression (knockback, hurt->dead transition, dead anim)
+	process_state();
 }

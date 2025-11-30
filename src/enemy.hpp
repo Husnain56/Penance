@@ -6,12 +6,12 @@
 #include <player.hpp>
 #include <vector>
 
-class Player; // forward
+class Player; // forward declaration
 using namespace GameConstants;
 
 class Enemy : public Character
 {
-  public:
+public:
 	// High level AI states - easy to extend / reason about in children
 	enum class AIState
 	{
@@ -73,6 +73,10 @@ class Enemy : public Character
 		// default does nothing special; update() will handle animations / hits
 	}
 
+	// Called when hurt to allow enemies to customise knockback. Default forwards to Character.
+	// Child classes (LongRange/ShortRange) override to provide different knockback strengths.
+	virtual void on_hurt(float strength);
+
 	// Tuning parameters for AI (protected so child classes can tweak in ctor)
 	float patrol_speed;
 	float chase_speed;
@@ -102,30 +106,38 @@ class Enemy : public Character
 	static std::vector<Enemy *> s_enemies;
 };
 
+// --- Derived Enemy Types for Knockback Customization ---
+
 class LongRangeEnemy : public Enemy
 {
-  public:
+public:
 	LongRangeEnemy(Vector2 pos) : Enemy(pos)
 	{
 		set_aggro_range(400.0f);
-		set_attack_range(300.0f);
-		set_attack_damage(10);
+		set_attack_range(250.0f);
+		set_attack_damage(30);
 		set_patrol_speed(4.0f);
 		set_chase_speed(6.0f);
 	}
+
+	// smaller knockback when hurt (ranged enemy)
+	void on_hurt(float strength) override;
 };
 
 class ShortRangeEnemy : public Enemy
 {
-  public:
+public:
 	ShortRangeEnemy(Vector2 pos) : Enemy(pos)
 	{
 		set_aggro_range(600.0f);
-		set_attack_range(70.0f);
+		set_attack_range(90.0f);
 		set_attack_damage(10);
 		set_patrol_speed(7.0f);
 		set_chase_speed(10.0f);
 	}
+
+	// stronger knockback for short-range (more melee-like, heavier impact)
+	void on_hurt(float strength) override;
 };
 
 class MainVillain : public Enemy

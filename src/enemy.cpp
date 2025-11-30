@@ -9,14 +9,19 @@ void Enemy::update(const Map &map)
 {
 	using namespace GameConstants;
 
-	// Keep default constants if not overridden by child (they can set protected members)
+	if (current_state == STATE_DEAD || current_state == STATE_HURT)
+	{
+		process_state();
+		return;
+	}
+	
+	// enemy ai meachanics parameters
 	const float AGGRO_RANGE = aggro_range;
 	const float ATTACK_RANGE = attack_range;
 	const int ENEMY_DMG = attack_damage;
 	const float CHASE_SPEED = chase_speed;
 	const float PATROL_SPEED = patrol_speed;
 
-	// Ensure animation rectangles baseline (prevents flicker when flipping)
 	run_anim.frame_rec.width = run_anim.frame_width;
 	attack_anim.frame_rec.width = attack_anim.frame_width;
 	jump_anim.frame_rec.width = jump_anim.frame_width;
@@ -30,7 +35,6 @@ void Enemy::update(const Map &map)
 	float offX = (run_anim.frame_width * scale - hitW) / 2.0f;
 	float offY = (run_anim.frame_rec.height * scale - hitH);
 
-	// Decide AI state based on player presence and distance
 	Player *p = target_player;
 	bool havePlayer = (p != nullptr && p->is_alive());
 
@@ -192,7 +196,7 @@ void Enemy::update(const Map &map)
 		}
 	}
 
-	// --- Vertical: gravity + map collisions ---
+	// gravity + map collisions
 	velocity_y += GRAVITY;
 	position.y += velocity_y;
 
@@ -243,7 +247,6 @@ void Enemy::update(const Map &map)
 		run_anim.frame_rec.width = run_anim.frame_width;
 	}
 
-	// --- Attack handling: frame timing + hit ---
 	if (wantToAttack)
 	{
 		if (!is_attacking)
@@ -290,4 +293,21 @@ void Enemy::update(const Map &map)
 			}
 		}
 	}
+
+	process_state();
+}
+
+void Enemy::on_hurt(float strength)
+{
+	Character::on_hurt(strength);
+}
+
+void LongRangeEnemy::on_hurt(float /*strength*/)
+{
+	Character::on_hurt(25.0f);
+}
+
+void ShortRangeEnemy::on_hurt(float /*strength*/)
+{
+	Character::on_hurt(25.0f);
 }

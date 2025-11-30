@@ -1,27 +1,22 @@
 #include <game.hpp>
+#include <kitsune.hpp>
+#include <raylib.h>
+
 using namespace Resources;
 using namespace MapResource;
 using namespace GameConstants;
 
 Game::Game() : currentMap(BASE_SPRITE_SCALE), player({200.0f, GROUND_Y - 200.0f})
 {
-	// Initialising Window
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Penance");
 	SetTargetFPS(60);
 
-	// Initialising Resources
 	background = LoadTexture(BACKGROUND_IMAGE.c_str());
-
-	// Initialising Map
 	currentMap.load_map(CASTLE_IMAGE, CASTLE_CSV);
-
-	// Initialising Player
 	player.init();
 
-	// Initialising Enemies
 	init_enemies();
 
-	// Initialising Camera
 	camera = {0};
 	camera.zoom = 1.0f;
 	camera.offset = {(float)SCREEN_WIDTH * 0.38f, (float)SCREEN_HEIGHT * 0.75f};
@@ -40,15 +35,32 @@ Game::~Game()
 
 void Game::update()
 {
-	// Update character movement
+	// 1. Update Player (Inputs -> Physics -> Animation)
 	player.update(currentMap);
 
-	for (auto &enemy : enemies)
+	// 2. Update Enemies (AI -> Physics -> Animation OR Hurt/Dead logic)
+	for (auto& enemy : enemies)
 		enemy->update(currentMap);
 
-	// Update camera logic
+	// 3. Cleanup Dead Enemies
+	// This removes enemies only AFTER they have finished their death animation
+	// (Character::process_state sets is_removed() to true when dead anim ends)
+	for (auto it = enemies.begin(); it != enemies.end();)
+	{
+		if ((*it)->is_removed())
+		{
+			delete* it;
+			it = enemies.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+
 	update_camera();
 }
+
 
 void Game::draw()
 {
@@ -71,9 +83,7 @@ void Game::draw()
 		enemy->draw();
 
 	EndMode2D();
-
 	DrawFPS(10, 20);
-
 	EndDrawing();
 }
 
@@ -88,65 +98,64 @@ void Game::run()
 
 void Game::init_enemies()
 {
-	// Setup Kitsune
-	Vector2 pos = {1000.0f, GROUND_Y};
-	Kitsune *kitsune = new Kitsune(pos);
-	kitsune->init();
-	enemies.push_back(kitsune);
+//// Add enemies here. They will automatically register to the static list via constructor.
+Vector2 pos = {1000.0f, GROUND_Y};
+Kitsune *kitsune = new Kitsune(pos);
+kitsune->init();
+enemies.push_back(kitsune);
 
-	// Setup Blue Samurai
-	pos = {5000.0f, GROUND_Y};
-	BlueSamurai *samurai = new BlueSamurai(pos);
-	samurai->init();
-	samurai->set_scale(2.2f);
-	enemies.push_back(samurai);
+// Setup Blue Samurai
+pos = {5000.0f, GROUND_Y};
+BlueSamurai *samurai = new BlueSamurai(pos);
+samurai->init();
+samurai->set_scale(2.2f);
+enemies.push_back(samurai);
 
-	// Setup Skeleton Warrior
-	pos = {7000.0f, GROUND_Y};
-	SkeletonWarrior *skeleton = new SkeletonWarrior(pos);
-	skeleton->init();
-	enemies.push_back(skeleton);
+// Setup Skeleton Warrior
+pos = {7000.0f, GROUND_Y};
+SkeletonWarrior *skeleton = new SkeletonWarrior(pos);
+skeleton->init();
+enemies.push_back(skeleton);
 
-	// Setup Purple Knight
-	pos = {9000.0f, GROUND_Y};
-	PurpleKnight *knight = new PurpleKnight(pos);
-	knight->init();
-	enemies.push_back(knight);
+// Setup Purple Knight
+pos = {9000.0f, GROUND_Y};
+PurpleKnight *knight = new PurpleKnight(pos);
+knight->init();
+enemies.push_back(knight);
 
-	// Setup Skeleton Spearman
-	pos = {11000.0f, GROUND_Y};
-	SkeletonSpearman *spearman = new SkeletonSpearman(pos);
-	spearman->init();
-	enemies.push_back(spearman);
+// Setup Skeleton Spearman
+pos = {11000.0f, GROUND_Y};
+SkeletonSpearman *spearman = new SkeletonSpearman(pos);
+spearman->init();
+enemies.push_back(spearman);
 
-	// Setup Silver Knight
-	pos = {13000.0f, GROUND_Y};
-	SilverKnight *silver_knight = new SilverKnight(pos);
-	silver_knight->init();
-	enemies.push_back(silver_knight);
+// Setup Silver Knight
+pos = {13000.0f, GROUND_Y};
+SilverKnight *silver_knight = new SilverKnight(pos);
+silver_knight->init();
+enemies.push_back(silver_knight);
 
-	// Setup Karasu Tengu
-	pos = {15000.0f, GROUND_Y};
-	KarasuTengu *tengu = new KarasuTengu(pos);
-	tengu->init();
-	enemies.push_back(tengu);
+// Setup Karasu Tengu
+pos = {15000.0f, GROUND_Y};
+KarasuTengu *tengu = new KarasuTengu(pos);
+tengu->init();
+enemies.push_back(tengu);
 
-	// Setup Yamabushi
-	pos = {17000.0f, GROUND_Y};
-	Yamabushi *yamabushi = new Yamabushi(pos);
-	yamabushi->init();
-	enemies.push_back(yamabushi);
+// Setup Yamabushi
+pos = {17000.0f, GROUND_Y};
+Yamabushi *yamabushi = new Yamabushi(pos);
+yamabushi->init();
+enemies.push_back(yamabushi);
 
+	// Set player target for all
 	for (auto &enemy : enemies)
 		enemy->set_target_player(&player);
 }
 
 void Game::update_camera()
 {
-	// Follow Player
 	camera.target = player.get_position();
 
-	// Clamp Camera Logic
 	float mapWidth = currentMap.get_width() * currentMap.get_tile_size();
 	if (camera.target.x < SCREEN_WIDTH / 2)
 		camera.target.x = SCREEN_WIDTH / 2;
