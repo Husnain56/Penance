@@ -1,0 +1,23 @@
+[Narrator]
+(MC's blade flashes down. Kaelen's eyes widen, then dull. Blood pools in the mud. Edric recoils in horror.)
+
+[Edric]
+(Nephew, voice breaking, staring at the corpse)
+Uncle! Father's gone—no curse left to lift! You slew your own blood blind!
+
+[MC]
+(blade dripping, resolute)
+Justice served. Elara rests now.
+
+[Edric]
+(standing, tears streaming, drawing his sword)
+Blind slaughter! Something twisted him—you murdered without proof. I can't follow this darkness.
+
+[Edric]
+(fierce farewell, backing toward his horse)
+This is my farewell. Next we meet, enemies. Blood won't bring her back—it stains us all.
+
+[Narrator]
+(Edric wheels his horse and gallops into the night, leaving MC alone with the body.)
+
+[End Dialogue]

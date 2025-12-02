@@ -1,47 +1,57 @@
-# Makefile for Penance build process
-
 .PHONY: all game clean rebuild help
 
-# Detect operating system and set build parameters
+# --- OS Detection & Configuration ---
 ifeq ($(OS),Windows_NT)
+    # Windows Settings
     DETECTED_OS := Windows
-    EXECUTABLE := ./build/Debug/Penance.exe
-    BUILD_TYPE := Debug
+    BUILD_DIR   := build
+    # Visual Studio (MSVC) places the executable in a config subfolder
+    EXECUTABLE  := ./build/Debug/Penance.exe
+
+    # MSVC requires config to be specified at build time, not just generation
+    BUILD_FLAGS := --config Debug --parallel
+
+    # Windows equivalent of nproc is usually %NUMBER_OF_PROCESSORS%,
+    # but --parallel without args defaults to all cores in modern CMake.
 else
-    DETECTED_OS := $(shell uname -s)
-    EXECUTABLE := ./build/Penance
-    BUILD_TYPE := Release
+    # Linux Settings
+    DETECTED_OS := Linux
+    BUILD_DIR   := build
+    EXECUTABLE  := ./build/Penance
+
+    # Linux handles config at generation time
+    BUILD_FLAGS := --parallel $(shell nproc)
 endif
 
 # Default target
 all: game
 
-# Main build target
+# --- Main Flow ---
 game:
-	@echo "Configuring CMake project for $(BUILD_TYPE) build..."
-	cmake -S . -B build -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
-	@echo "Building project..."
-	cmake --build build
-	@echo "Running the game on $(DETECTED_OS)..."
-	$(EXECUTABLE)
+	@echo "=== 1. Configuring CMake ($(DETECTED_OS)) ==="
+	cmake -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=Debug
 
-# Clean build artifacts
+	@echo "=== 2. Building Project ==="
+	cmake --build $(BUILD_DIR) $(BUILD_FLAGS)
+
+	@echo "=== 3. Running Game ==="
+	@if [ -f "$(EXECUTABLE)" ]; then \
+		$(EXECUTABLE); \
+	else \
+		echo "Error: Executable not found at $(EXECUTABLE)."; \
+		echo "If you are on Windows, the build might have failed or placed it elsewhere."; \
+	fi
+
+# --- Utilities ---
 clean:
-	@echo "Cleaning build directory..."
-	rm -rf build
+	@echo "Removing build directory..."
+	# "cmake -E remove_directory" works on Linux AND Windows (cmd/powershell)
+	cmake -E remove_directory $(BUILD_DIR)
 
-# Rebuild from scratch
 rebuild: clean game
 
-# Help target to show available commands
 help:
-	@echo "Available targets:"
-	@echo "  make game    - Configure, build and run the game (default)"
-	@echo "  make all     - Same as 'make game'"
-	@echo "  make clean   - Remove build directory"
-	@echo "  make rebuild - Clean and rebuild from scratch"
-	@echo "  make help    - Show this help message"
-	@echo ""
-	@echo "Detected OS: $(DETECTED_OS)"
-	@echo "Build type: $(BUILD_TYPE)"
-	@echo "Executable path: $(EXECUTABLE)"
+	@echo "Makefile for Penance ($(DETECTED_OS))"
+	@echo "  make         : Configure, build, and run the game"
+	@echo "  make clean   : Delete the build folder"
+	@echo "  make rebuild : Delete build folder and start fresh"

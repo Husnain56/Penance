@@ -1,0 +1,31 @@
+[MC]
+Where am I…?
+What happened to me…?
+No… none of that matters now.
+
+[MC]
+They once called me a knight. Protector of the weak.
+A shield against the darkness.
+Empty words… all of them.
+
+[MC]
+How can I claim to protect anyone
+when I failed to protect my own wife?
+
+[MC]
+Her voice still echoes in my mind.
+Her final breath still burns in my chest.
+I was too late. Too weak. Too blind.
+
+[MC]
+Until I take revenge on the one who stole her from me,
+I cannot call myself a knight.
+I am nothing but a man chasing the justice I could not deliver.
+
+[MC]
+And I will not stop
+until the blade that ended her life
+meets mine.
+
+[Choice]
+: Continue -> start.txt

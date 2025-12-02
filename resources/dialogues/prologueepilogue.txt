@@ -1,0 +1,39 @@
+[Narrator]
+(The three corner Kaelen in the ruined chapel under lightning flashes.)
+
+[Narrator]
+(Swords clash in brutal fury—MC's blade finds its mark. Kaelen crumples, kneeling in the mud.)
+
+[Alistair]
+(Squire, gripping his sword, voice urgent)
+Strike now, my lord! The traitor kneels—Elara's blood cries for justice. End him as he ended her!
+
+[MC]
+(sword raised, trembling with rage, eyes locked on Kaelen)
+Three years you waited... and this is your homecoming? Speak your last, brother.
+
+[Kaelen]
+(weak, defiant rasp, shadows flickering unnaturally around him)
+Finish it... or join her in the dark. You were always... too late.
+
+[Narrator]
+(Nephew, stepping forward, hand outstretched)
+
+[Edric]
+No, Uncle! Look at him—those eyes, that voice... not Father's! A demon wears his skin. Spare him—we purge the curse, save his soul!
+
+[Alistair]
+(fierce, advancing)
+Mercy is madness! He slew your wife, mocked your grief. Vengeance honors her memory—strike true!
+
+[Edric]
+(desperate, blocking slightly)
+Honor demands truth first! Kill blindly, and what knight are you? Bind him—there's sorcery here!
+
+[MC]
+(blade hovering, torn)
+Justice... or doubt?
+
+[Choice]
+Kill him -> kill.txt
+Spare him -> spare.txt

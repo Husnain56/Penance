@@ -1,0 +1,73 @@
+[Narrator]
+(MC stands in the open doorway of his home.
+It is night.
+The hall is dark and cold. He sees the tall, still outline of a figure standing inside room.)
+
+[MC]
+(whispering, uncertain)
+Kaelen?
+
+[Narrator]
+(The Brother, Kaelen, turns his head slightly. His armor is dull and stained. At his feet, a pale shape is visible on the stone floor.)
+
+[Narrator]
+(His gaze drops to the floor beside Kaelen.)
+(A sudden, sharp intake of breath.)
+
+[MC]
+Elara...
+(He rushes forward, ignoring Kaelen, collapsing next to his wife’s body. He touches her face—it is already cold.)
+
+[MC]
+(a desperate, broken sound)
+No. Not her. You can't...
+She was everything.
+
+[Narrator]
+(Kaelen's voice is unnaturally smooth, a sound that doesn't fit the familiar brother.)
+
+[Kaelen]
+She waited for the knight who never came home.
+Three years I waited in the dark. You were always too late, brother.
+
+
+[Narrator]
+(He scrambles back, tears and anguish distorting his features.)
+(A scream of pure rage.)
+
+[MC]
+I will kill you for this!
+After all this time, this is how you return?!
+
+
+[Kaelen]
+(He offers a cold, almost bored smile.)
+You cannot protect the living. You certainly cannot touch the damned.
+Not anymore.
+
+[Narrator]
+(Kaelen’s form dissolves. Not a step, not a noise—just a quick, dark ripple, and he is gone. The air where he stood feels suddenly empty and colder.)
+
+
+[Narrator]
+(He falls forward, his voice reduced to a dry rasp.)
+(A raw, defeated whisper.)
+
+[MC]
+Gone...
+I let him escape.
+
+[Narrator]
+(He stays kneeling beside his wife.)
+
+[Narrator]
+(The only witness to his failure is the cold stone and the rain outside.)
+
+[Narrator]
+(As the storm rages, memories flood back, haunting and relentless.)
+
+[Narrator]
+(Shadows of the past loom large, whispering secrets long buried.)
+
+[Choice] 
+: Continue -> letprologuebegin.txt

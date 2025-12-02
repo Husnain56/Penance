@@ -1,0 +1,46 @@
+[Narrator]
+(Alistair enters the doorway, lantern in hand. Rain drips from his cloak. He freezes at the sight of MC kneeling beside Elara's body.)
+
+[Narrator]
+(Squire, voice trembling with shock)
+
+[Alistair]
+My lord? Gods above... what horror is this? Elara... she's...
+
+[MC]
+(voice hollow, eyes fixed on her face)
+Alistair. Too late again. Kaelen... my brother did this.
+
+[Narrator]
+(Edric bursts in behind, young face pale, sword half-drawn. He pushes past Alistair, dropping to his knees beside MC.)
+
+[Edric]
+(Nephew, disbelieving, voice cracking)
+Uncle? Father? No—this cannot be! Father would never... he loved her like his own blood!
+
+[MC]
+(rising slowly, rage simmering)
+He stood here, Edric. Spoke of waiting in the dark. Blamed me. Then he... dissolved like smoke.
+
+[Alistair]
+(firm, stepping forward)
+I've seen shadows twist men before, my lord. war changes none for the better. We must hunt him. End this.
+
+[Edric]
+(shaking his head fiercely, gripping MC's arm)
+Wrong! Something possesses him—sorcery, a curse! Father couldn't murder. He's lost, not damned. We find him, save him!
+
+[MC]
+(eyes hardening)
+Belief changes naught. He took her. Justice demands his blood.
+
+[Alistair]
+(nods grimly)
+I'll ready the horses, my lord. Dawn or dusk, we track the traitor.
+
+[Edric]
+(standing, conflicted but resolute)
+And I... I'll come. For truth, if not for vengeance. We ride together.
+
+[End Dialogue]
+-> prologueepilogue.txt

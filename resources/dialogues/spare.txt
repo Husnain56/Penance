@@ -1,0 +1,23 @@
+[Narrator]
+(Kaelen bound and groaning on the chapel floor. MC lowers his sword. Edric exhales in relief.)
+
+[Alistair]
+(Squire, face twisting in disgust, sheathing his blade)
+Mercy to this monster? After Elara's blood on his hands? You've lost your steel, my lord!
+
+[MC]
+(grim, turning away)
+Bind him tight. We'll find the truth behind the curse.
+
+[Alistair]
+(stepping back, voice cold as iron)
+You may have shown mercy, but I won't. This is my farewell—next we meet, we're enemies. Justice dies with your doubt.
+
+[Narrator]
+(Alistair spits on the ground, mounts his horse, and rides into the storm, vanishing into shadow.)
+
+[Edric]
+(eyes wide, gripping MC's shoulder)
+He'll regret that path, Uncle. We've spared a soul tonight.
+
+[End Dialogue]
