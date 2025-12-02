@@ -49,6 +49,8 @@ Game::Game() : currentMap(BASE_SPRITE_SCALE), player({200.0f, GROUND_Y - 200.0f}
 	currentState = MAIN_MENU;
 	previousState = MAIN_MENU;
 	storedDialogueFile = "";
+
+	counter = 0;
 }
 
 Game::~Game()
@@ -248,7 +250,12 @@ void Game::update_gameplay()
 	player.update(currentMap);
 
 	if (!player.is_alive() && !player.is_dead_anim_playing())
+		counter++;
+	if (!player.is_alive() && counter >= 120)	
+	{
+		counter = 0;
 		currentState = GAME_OVER;
+	}
 
 	// 2. Update Enemies (AI -> Physics -> Animation OR Hurt/Dead logic)
 	for (auto &enemy : enemies)
@@ -514,6 +521,8 @@ void Game::reset_game()
 
 	// Reset camera
 	camera.target = player.get_position();
+
+	counter = 0;
 
 	// Reset states
 	previousState = MAIN_MENU;

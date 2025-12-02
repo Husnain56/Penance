@@ -33,6 +33,8 @@ class Game
 	std::vector<Enemy *> enemies;
 	std::string storedDialogueFile;
 
+	int counter;
+
 	void init_enemies();
 	void update_camera();
 	void update_main_menu();

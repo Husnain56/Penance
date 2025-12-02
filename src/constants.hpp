@@ -14,7 +14,6 @@ namespace GameConstants
 	constexpr float BASE_SPRITE_SCALE = 3.0f;
 
 	constexpr int FRAME_RATE = 8;
-	constexpr int ACTION_FRAME_RATE = 4;
 
 	// Gameplay tuning
 	constexpr int PLAYER_ATTACK_DAMAGE = 40;	  // player deals more damage
@@ -24,6 +23,6 @@ namespace GameConstants
 	constexpr float ENEMY_ATTACK_RANGE = 64.0f;	  // melee range for enemy
 
 	// Separate frame rates for attack animations (higher => faster)
-	constexpr int PLAYER_ATTACK_FRAME_RATE = 12;
+	constexpr int PLAYER_ATTACK_FRAME_RATE = 15;
 	constexpr int ENEMY_ATTACK_FRAME_RATE = 8;
 }; // namespace GameConstants

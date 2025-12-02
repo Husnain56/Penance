@@ -5,409 +5,331 @@
 #include <player.hpp>
 #include <resources.hpp>
 
-Player::Player(Vector2 pos) : Character(pos)
-{
-	scale = 2.5f;
-	accel = 0.7f;
-	decel = 0.85f;
-	max_speed = 20.0f;
-	draw_offset = {0.0f, 40.0f};
-	velocity_x = 0.0f;
-	velocity_y = 0.0f;
-	jump_count = 0;
-	attack_hit_registered = false;
+Player::Player(Vector2 pos) : Character(pos) {
+  scale = 2.5f;
+  accel = 0.75f;
+  decel = 0.75f;
+  max_speed = 5.0f;
+  draw_offset = {0.0f, 40.0f}; // Adjust based on your sprite assets
 
-	// Dash defaults: adjust to taste
-	is_dashing = false;
-	dash_frames_total = 10; // number of frames dash lasts
-	dash_frames_remaining = 0;
-	dash_speed = 30.0f;		   // pixels per frame -> dash distance ~ dash_speed * dash_frames_total
-	dash_cooldown_frames = 30; // cooldown in frames (~0.5s at 60FPS)
-	dash_cooldown_timer = 0;
+  // Constants (set once)
+  dash_frames_total = 10;
+  dash_speed = 30.0f;
+  dash_cooldown_frames = 30;
+
+  reset(); // Initialize state variables
 }
 
-void Player::init()
-{
-	using namespace Resources::PlayerResource;
-
-	load_texture(STATE_RUN, RUN_TEXTURE.c_str(), RUN_FRAMES);
-	load_texture(STATE_IDLE, IDLE_TEXTURE.c_str(), IDLE_FRAMES);
-	load_texture(STATE_ATTACK, ATTACK_TEXTURE.c_str(), ATTACK_FRAMES);
-	load_texture(STATE_JUMP, JUMP_TEXTURE.c_str(), JUMP_FRAMES);
-	load_texture(STATE_HURT, HURT_TEXTURE.c_str(), HURT_FRAMES);
-	load_texture(STATE_DEAD, DEAD_TEXTURE.c_str(), DEAD_FRAMES);
+void Player::init() {
+  using namespace Resources::PlayerResource;
+  load_texture(STATE_RUN, RUN_TEXTURE.c_str(), RUN_FRAMES);
+  load_texture(STATE_IDLE, IDLE_TEXTURE.c_str(), IDLE_FRAMES);
+  load_texture(STATE_ATTACK, ATTACK_TEXTURE.c_str(), ATTACK_FRAMES);
+  load_texture(STATE_JUMP, JUMP_TEXTURE.c_str(), JUMP_FRAMES);
+  load_texture(STATE_HURT, HURT_TEXTURE.c_str(), HURT_FRAMES);
+  load_texture(STATE_DEAD, DEAD_TEXTURE.c_str(), DEAD_FRAMES);
 }
 
-void Player::update(const Map &map)
-{
-	using namespace GameConstants;
-	float tileSize = map.get_tile_size();
+void Player::reset() {
+  velocity_x = 0.0f;
+  velocity_y = 0.0f;
+  jump_count = 0;
+  hp = get_max_hp();
 
-	if (is_removed())
-		return;
+  is_dashing = false;
+  dash_frames_remaining = 0;
+  dash_cooldown_timer = 0;
 
-	// If currently playing dead animation OR hurt state is active, let base class progress it and
-	// skip gameplay logic. process_state handles the dead animation, transition, and hurt
-	// knockback/anim.
-	if (current_state == STATE_DEAD || current_state == STATE_HURT)
-	{
-		process_state();
-		return; // Skip all input, movement, attack, jump, dash logic.
-	}
+  dead_anim_playing = false;
+  pending_removal = false;
 
-	// reduce dash cooldown timer (frame-based)
-	if (dash_cooldown_timer > 0)
-		--dash_cooldown_timer;
+  attack_hit_enemies.clear();
 
-	// ==============================
-	// 0. Read directional intent (but do not apply yet)
-	// ==============================
-	bool wantRight = IsKeyDown(KEY_D);
-	bool wantLeft = IsKeyDown(KEY_A);
-
-	// ==============================
-	// DASH: trigger on SHIFT press + directional intent (single press)
-	// - uses IsKeyPressed so holding shift won't keep dashing
-	// - respects cooldown and won't allow repeated dashes
-	// - do NOT allow dash while jumping
-	// ==============================
-	bool shiftPressed = IsKeyPressed(KEY_LEFT_SHIFT) || IsKeyPressed(KEY_RIGHT_SHIFT);
-	if (shiftPressed && !is_dashing && dash_cooldown_timer == 0 && !is_jumping)
-	{
-		// require directional input or use facing direction as fallback
-		int dir = 0;
-		if (wantRight)
-			dir = 1;
-		else if (wantLeft)
-			dir = -1;
-		else
-			dir = is_facing_right ? 1 : -1;
-
-		// start dash
-		is_dashing = true;
-		dash_frames_remaining = dash_frames_total;
-		velocity_x = dir * dash_speed;
-
-		// make dash feel like a quick run visually
-		current_state = STATE_RUN;
-
-		// reset run animation so fast traversal looks immediate
-		run_anim.curr_frame = 0;
-		run_anim.frame_counter = 0;
-		run_anim.frame_rec.x = 0.f;
-	}
-
-	// ==============================
-	// 1. HORIZONTAL MOVEMENT (normal, only when not dashing)
-	// ==============================
-	bool moving = false;
-	if (!is_dashing)
-	{
-		if (wantRight)
-		{
-			velocity_x += accel;
-			is_facing_right = true;
-			moving = true;
-		}
-		if (wantLeft)
-		{
-			velocity_x -= accel;
-			is_facing_right = false;
-			moving = true;
-		}
-
-		// Clamp speed
-		if (velocity_x > max_speed)
-			velocity_x = max_speed;
-		if (velocity_x < -max_speed)
-			velocity_x = -max_speed;
-
-		// Friction
-		if (!moving)
-		{
-			velocity_x *= decel;
-			if (std::fabs(velocity_x) < 0.05f)
-				velocity_x = 0.0f;
-		}
-
-		// Apply X
-		position.x += velocity_x;
-	}
-	else
-	{
-		// Apply dash movement directly (overrides normal handling)
-		position.x += velocity_x;
-	}
-
-	// --- Horizontal Collision ---
-	float hitW = run_anim.frame_width * scale * 0.5f;
-	float hitH = run_anim.frame_rec.height * scale * 0.9f;
-	float offX = (run_anim.frame_width * scale - hitW) / 2.0f;
-	float offY = (run_anim.frame_rec.height * scale - hitH);
-
-	int leftTile = (int)((position.x + offX) / tileSize);
-	int rightTile = (int)((position.x + offX + hitW) / tileSize);
-	int topTile = (int)((position.y + offY) / tileSize);
-	int bottomTile = (int)((position.y + offY + hitH - 1) / tileSize);
-
-	if (velocity_x > 0) // Right
-	{
-		if (map.get_tile_id(rightTile, topTile) > 0 || map.get_tile_id(rightTile, bottomTile) > 0)
-		{
-			position.x = (rightTile * tileSize) - hitW - offX - 0.1f;
-			velocity_x = 0;
-			// if we collided while dashing, cancel dash
-			if (is_dashing)
-			{
-				is_dashing = false;
-				dash_frames_remaining = 0;
-				dash_cooldown_timer = dash_cooldown_frames;
-			}
-		}
-	}
-	else if (velocity_x < 0) // Left
-	{
-		if (map.get_tile_id(leftTile, topTile) > 0 || map.get_tile_id(leftTile, bottomTile) > 0)
-		{
-			position.x = ((leftTile + 1) * tileSize) - offX + 0.1f;
-			velocity_x = 0;
-			// if we collided while dashing, cancel dash
-			if (is_dashing)
-			{
-				is_dashing = false;
-				dash_frames_remaining = 0;
-				dash_cooldown_timer = dash_cooldown_frames;
-			}
-		}
-	}
-
-	// If we're dashing, count down frames and finish dash when done
-	if (is_dashing)
-	{
-		if (dash_frames_remaining > 0)
-			--dash_frames_remaining;
-
-		// end dash if finished
-		if (dash_frames_remaining <= 0)
-		{
-			is_dashing = false;
-			// stop horizontal movement after dash
-			velocity_x = 0.0f;
-			// start cooldown
-			dash_cooldown_timer = dash_cooldown_frames;
-		}
-	}
-
-	// ==============================
-	// 2. VERTICAL MOVEMENT & DOUBLE JUMP LOGIC
-	// ==============================
-	velocity_y += GRAVITY;
-	position.y += velocity_y;
-
-	// Recalc grids for Y
-	leftTile = (int)((position.x + offX) / tileSize);
-	rightTile = (int)((position.x + offX + hitW) / tileSize);
-	topTile = (int)((position.y + offY) / tileSize);
-	bottomTile = (int)((position.y + offY + hitH) / tileSize);
-
-	// Determine grounded (reliable)
-	bool hitMapFloor
-		= (map.get_tile_id(leftTile, bottomTile) > 0 || map.get_tile_id(rightTile, bottomTile) > 0);
-	bool hitWorldFloor = (position.y >= GROUND_Y);
-	bool on_ground = false;
-
-	if (velocity_y > 0) // Falling
-	{
-		if (hitMapFloor || hitWorldFloor)
-		{
-			if (hitMapFloor)
-				position.y = (bottomTile * tileSize) - offY - hitH;
-			else
-				position.y = GROUND_Y;
-
-			velocity_y = 0;
-			is_jumping = false;
-
-			// RESET DOUBLE JUMP when grounded
-			on_ground = true;
-			jump_count = 0;
-		}
-		else
-		{
-			is_jumping = true;
-		}
-	}
-	else if (velocity_y < 0) // Jumping up
-	{
-		if (map.get_tile_id(leftTile, topTile) > 0 || map.get_tile_id(rightTile, topTile) > 0)
-		{
-			position.y = ((topTile + 1) * tileSize) - offY;
-			velocity_y = 0;
-		}
-	}
-
-	// --- DOUBLE JUMP INPUT ---
-	// Allow up to 2 jumps (initial + one mid-air)
-	if (IsKeyPressed(KEY_SPACE) && jump_count < 2)
-	{
-		is_jumping = true;
-		current_state = STATE_JUMP;
-		velocity_y = JUMP_FORCE;
-
-		// Increase counter (initial jump -> 1, second jump -> 2)
-		jump_count++;
-
-		// Reset Animation so the second jump feels punchy
-		jump_anim.curr_frame = 0;
-		jump_anim.frame_counter = 0;
-		jump_anim.frame_rec.x = 0.f;
-	}
-
-	// --- 4. ATTACK INPUT ---
-	if (IsKeyPressed(KEY_E) && !is_attacking)
-	{
-		current_state = STATE_ATTACK;
-		is_attacking = true;
-		attack_hit_enemies.clear();	   // clear per-attack hit list
-		attack_hit_registered = false; // legacy flag
-		attack_anim.curr_frame = 0;
-		attack_anim.frame_counter = 0;
-	}
-
-	// --- 5. ANIMATION STATE ---
-	// Do not override hurt state if it is active.
-	if (!is_jumping && !is_attacking && current_state != STATE_HURT)
-	{
-		if (std::fabs(velocity_x) > 0.5f)
-			current_state = STATE_RUN;
-		else
-			current_state = STATE_IDLE;
-	}
-
-	// --- 6. ANIMATION PLAYBACK & ATTACK HIT LOGIC ---
-	if (is_attacking)
-	{
-		// Faster playback for attack action
-		attack_anim.frame_counter++;
-		if (attack_anim.frame_counter >= (60 / PLAYER_ATTACK_FRAME_RATE))
-		{
-			attack_anim.frame_counter = 0;
-			attack_anim.curr_frame++;
-			if (attack_anim.curr_frame >= attack_anim.total_frame)
-			{
-				is_attacking = false;
-				attack_anim.curr_frame = 0;
-				attack_hit_registered = false;
-				attack_hit_enemies.clear();
-			}
-			else
-			{
-				attack_anim.frame_rec.x = (float)attack_anim.curr_frame * attack_anim.frame_width;
-				attack_anim.frame_rec.width = attack_anim.frame_width; // ensure stable width
-			}
-		}
-
-		// --- LOOSENED HIT: any enemy inside effective range at ANY frame during attack gets hit
-		// (once) ---
-		{
-			const float baseRange = PLAYER_ATTACK_RANGE * (scale / 2.5f);
-			const float speedBonus
-				= std::fabs(velocity_x) * 6.0f + (is_dashing ? dash_speed * 0.9f : 0.0f);
-			const float effectiveRange = baseRange + speedBonus;
-			const int dmg = PLAYER_ATTACK_DAMAGE;
-
-			for (Enemy *e : Enemy::all())
-			{
-				if (e == nullptr || !e->is_alive())
-					continue;
-
-				// skip if already hit this attack
-				if (std::find(attack_hit_enemies.begin(), attack_hit_enemies.end(), e)
-					!= attack_hit_enemies.end())
-					continue;
-
-				Vector2 myPos = get_position();
-				Vector2 enemyPos = e->get_position();
-				float dx = enemyPos.x - myPos.x;
-				float dy = enemyPos.y - myPos.y;
-				float dist = std::sqrt(dx * dx + dy * dy);
-
-				// require enemy roughly in front for consistent hits, unless moving fast
-				bool inFront = (dx >= 0 && is_facing_right) || (dx <= 0 && !is_facing_right);
-				bool allowHitWhileMovingFast = (std::fabs(velocity_x) > 8.0f) || is_dashing;
-
-				if (dist <= effectiveRange && (inFront || allowHitWhileMovingFast))
-				{
-					e->take_damage(dmg);
-
-					// If enemy died from this hit, heal the player by 20 hp (cap enforced in
-					// Character::heal)
-					if (!e->is_alive())
-					{
-						this->heal(20);
-					}
-
-					// record this enemy as hit for this attack animation
-					attack_hit_enemies.push_back(e);
-				}
-			}
-		}
-	}
-	else if (is_jumping)
-	{
-		jump_anim.frame_counter++;
-		if (jump_anim.frame_counter >= (60 / FRAME_RATE))
-		{
-			jump_anim.frame_counter = 0;
-			if (jump_anim.curr_frame < jump_anim.total_frame - 1)
-				jump_anim.curr_frame++;
-			jump_anim.frame_rec.x = (float)jump_anim.curr_frame * jump_anim.frame_width;
-		}
-	}
-	else if (current_state == STATE_RUN)
-	{
-		// When dashing, play run animation faster to convey speed
-		int run_anim_rate = is_dashing ? (FRAME_RATE * 3) : FRAME_RATE;
-		run_anim.frame_counter++;
-		if (run_anim.frame_counter >= (60 / run_anim_rate))
-		{
-			run_anim.frame_counter = 0;
-			run_anim.curr_frame = (run_anim.curr_frame + 1) % run_anim.total_frame;
-			run_anim.frame_rec.x = (float)run_anim.curr_frame * run_anim.frame_width;
-		}
-	}
-	else
-	{
-		idle_anim.frame_counter++;
-		if (idle_anim.frame_counter >= (60 / FRAME_RATE))
-		{
-			idle_anim.frame_counter = 0;
-			idle_anim.curr_frame = (idle_anim.curr_frame + 1) % idle_anim.total_frame;
-			idle_anim.frame_rec.x = (float)idle_anim.curr_frame * idle_anim.frame_width;
-		}
-	}
-
-	// Let Character handle hurt/dead progression (knockback, hurt->dead transition, dead anim)
-	process_state();
+  // Default Spawn
+  set_position({200.0f, GameConstants::GROUND_Y - 200.0f});
 }
 
-void Player::reset()
-{
-	velocity_x = 0.0f;
-	velocity_y = 0.0f;
-	jump_count = 0;
-	attack_hit_registered = false;
-	hp = get_max_hp();
-	dead_anim_playing = false;
-	pending_removal = false;
+void Player::update(const Map &map) {
+  using namespace GameConstants;
 
-	// Dash defaults: adjust to taste
-	is_dashing = false;
-	dash_frames_total = 10; // number of frames dash lasts
-	dash_frames_remaining = 0;
-	dash_speed = 30.0f;		   // pixels per frame -> dash distance ~ dash_speed * dash_frames_total
-	dash_cooldown_frames = 30; // cooldown in frames (~0.5s at 60FPS)
-	dash_cooldown_timer = 0;
+  if (is_removed())
+    return;
 
-	set_position({200.0f, GROUND_Y - 200.0f});
+  // 1. High Priority States (Dead/Hurt) - Skip logic
+  if (current_state == STATE_DEAD || current_state == STATE_HURT) {
+    process_state();
+    return;
+  }
+
+  float tileSize = map.get_tile_size();
+
+  // --- Shared Hitbox Calculation (Done once per frame) ---
+  // Note: Assuming run_anim is representative of the body size
+  float hitW = run_anim.frame_width * scale * 0.5f;
+  float hitH = run_anim.frame_rec.height * scale * 0.9f;
+  float offX = (run_anim.frame_width * scale - hitW) / 2.0f;
+  float offY = (run_anim.frame_rec.height * scale - hitH);
+
+  // Grid Coordinates
+  int leftTile = (int)((position.x + offX) / tileSize);
+  int rightTile = (int)((position.x + offX + hitW) / tileSize);
+  int topTile = (int)((position.y + offY) / tileSize);
+  int bottomTile = (int)((position.y + offY + hitH - 1) / tileSize);
+
+  // --- Input & Dash Timers ---
+  if (dash_cooldown_timer > 0)
+    --dash_cooldown_timer;
+
+  bool wantRight = IsKeyDown(KEY_D);
+  bool wantLeft = IsKeyDown(KEY_A);
+  bool shiftPressed =
+      IsKeyPressed(KEY_LEFT_SHIFT) || IsKeyPressed(KEY_RIGHT_SHIFT);
+
+  // --- DASH LOGIC ---
+  if (shiftPressed && !is_dashing && dash_cooldown_timer == 0 && !is_jumping) {
+    int dir = 0;
+    if (wantRight)
+      dir = 1;
+    else if (wantLeft)
+      dir = -1;
+    else
+      dir = is_facing_right ? 1 : -1;
+
+    is_dashing = true;
+    dash_frames_remaining = dash_frames_total;
+    velocity_x = dir * dash_speed;
+
+    current_state = STATE_RUN; // Visual override
+    // Reset run anim to make dash look responsive
+    run_anim.curr_frame = 0;
+    run_anim.frame_rec.x = 0.f;
+  }
+
+  // --- MOVEMENT PHYSICS ---
+  if (is_dashing) {
+    // Dash: No friction, fixed velocity, timer countdown
+    if (--dash_frames_remaining <= 0) {
+      is_dashing = false;
+      velocity_x = 0.0f; 
+      dash_cooldown_timer = dash_cooldown_frames;
+    }
+  } else {
+    // Normal Move
+    bool moving = false;
+    if (wantRight) {
+      velocity_x += accel;
+      is_facing_right = true;
+      moving = true;
+    }
+    if (wantLeft) {
+      velocity_x -= accel;
+      is_facing_right = false;
+      moving = true;
+    }
+
+    if (std::abs(velocity_x) > max_speed)
+      velocity_x = (velocity_x > 0 ? max_speed : -max_speed);
+
+    if (!moving) {
+      velocity_x *= decel;
+      if (std::abs(velocity_x) < 0.1f)
+        velocity_x = 0.0f;
+    }
+  }
+
+  // Apply X & Check Collision
+  position.x += velocity_x;
+
+  // Recalc X tiles after move
+  leftTile = (int)((position.x + offX) / tileSize);
+  rightTile = (int)((position.x + offX + hitW) / tileSize);
+
+  if (velocity_x > 0 && (map.get_tile_id(rightTile, topTile) > 0 ||
+                         map.get_tile_id(rightTile, bottomTile) > 0)) {
+    position.x = (rightTile * tileSize) - hitW - offX - 0.1f;
+    velocity_x = 0;
+    if (is_dashing) {
+      is_dashing = false;
+      dash_frames_remaining = 0;
+    }
+  } else if (velocity_x < 0 && (map.get_tile_id(leftTile, topTile) > 0 ||
+                                map.get_tile_id(leftTile, bottomTile) > 0)) {
+    position.x = ((leftTile + 1) * tileSize) - offX + 0.1f;
+    velocity_x = 0;
+    if (is_dashing) {
+      is_dashing = false;
+      dash_frames_remaining = 0;
+    }
+  }
+
+  // --- VERTICAL PHYSICS ---
+  velocity_y += GRAVITY;
+  position.y += velocity_y;
+
+  // Recalc Y tiles after move
+  topTile = (int)((position.y + offY) / tileSize);
+  bottomTile = (int)((position.y + offY + hitH) / tileSize); // hitH full check
+
+  // We need to re-check X tiles because X-collision might have shifted us
+  leftTile = (int)((position.x + offX) / tileSize);
+  rightTile = (int)((position.x + offX + hitW) / tileSize);
+
+  bool hitMapFloor = (map.get_tile_id(leftTile, bottomTile) > 0 ||
+                      map.get_tile_id(rightTile, bottomTile) > 0);
+  bool hitWorldFloor = (position.y >= GROUND_Y);
+
+  if (velocity_y > 0.0f) // Falling
+  {
+    if (hitMapFloor || hitWorldFloor) {
+      if (hitMapFloor)
+        position.y = (bottomTile * tileSize) - offY - hitH;
+      else
+        position.y = GROUND_Y;
+
+      velocity_y = 0;
+      is_jumping = false;
+      jump_count = 0; // Reset double jump
+    } else {
+      is_jumping = true;
+    }
+  } else if (velocity_y < 0.0f) // Jumping Up
+  {
+    if (map.get_tile_id(leftTile, topTile) > 0 ||
+        map.get_tile_id(rightTile, topTile) > 0) {
+      position.y = ((topTile + 1) * tileSize) - offY;
+      velocity_y = 0;
+    }
+  }
+
+  // --- JUMP INPUT ---
+  if (IsKeyPressed(KEY_SPACE) && jump_count < 2) {
+    is_jumping = true;
+    current_state = STATE_JUMP;
+    velocity_y = JUMP_FORCE;
+    jump_count++;
+
+    // Reset jump anim
+    jump_anim.curr_frame = 0;
+    jump_anim.frame_counter = 0;
+  }
+
+  // --- ATTACK INPUT ---
+  if (IsKeyPressed(KEY_E) && !is_attacking) {
+    current_state = STATE_ATTACK;
+    is_attacking = true;
+    attack_hit_enemies.clear();
+    attack_anim.curr_frame = 0;
+    attack_anim.frame_counter = 0;
+  }
+
+  // --- STATE MANAGEMENT ---
+  if (!is_jumping && !is_attacking && current_state != STATE_HURT) {
+    current_state = (std::abs(velocity_x) > 0.5f) ? STATE_RUN : STATE_IDLE;
+  }
+
+  // =========================================================
+  // REVISED ATTACK LOGIC
+  // =========================================================
+  if (is_attacking) {
+    // 1. Advance Animation
+    attack_anim.frame_counter++;
+    if (attack_anim.frame_counter >= (60 / PLAYER_ATTACK_FRAME_RATE)) {
+      attack_anim.frame_counter = 0;
+      attack_anim.curr_frame++;
+      if (attack_anim.curr_frame >= attack_anim.total_frame) {
+        is_attacking = false;
+        attack_anim.curr_frame = 0;
+        attack_hit_enemies.clear();
+      } else {
+        attack_anim.frame_rec.x =
+            (float)attack_anim.curr_frame * attack_anim.frame_width;
+      }
+    }
+
+    // 2. Determine "Active Frames"
+    // Example: If total frames is 6, the hit happens roughly on frames 2, 3, 4.
+    // Adjust these numbers based on your specific sprite sheet visually!
+    int start_hit_frame = 1;
+    int end_hit_frame = std::max(1, (int)attack_anim.total_frame - 2);
+
+    bool is_active_frame = (attack_anim.curr_frame >= start_hit_frame &&
+                            attack_anim.curr_frame <= end_hit_frame);
+
+    if (is_active_frame) {
+      const float baseRange = PLAYER_ATTACK_RANGE * (scale / 2.5f);
+
+      // REDUCED BONUS: was * 6.0f, now * 1.5f.
+      // This adds a slight lunge feeling without creating a phantom hitbox.
+      const float speedBonus = std::abs(velocity_x) * 1.5f;
+      const float effectiveRange = baseRange + speedBonus;
+      const int dmg = PLAYER_ATTACK_DAMAGE;
+
+      Vector2 myPos = get_position();
+
+      for (Enemy *e : Enemy::all()) {
+        if (e == nullptr || !e->is_alive())
+          continue;
+
+        // Check if already hit this specific attack swing
+        if (std::find(attack_hit_enemies.begin(), attack_hit_enemies.end(),
+                      e) != attack_hit_enemies.end())
+          continue;
+
+        Vector2 enemyPos = e->get_position();
+        float dx = enemyPos.x - myPos.x;
+        float dy = enemyPos.y - myPos.y; // Keep Y check for vertical alignment
+
+        // Quick Box Check first (Optimization)
+        if (std::abs(dx) > effectiveRange || std::abs(dy) > effectiveRange)
+          continue;
+
+        float dist = std::sqrt(dx * dx + dy * dy);
+
+        // STRICTER DIRECTION CHECK:
+        // 1. Must be facing the enemy.
+        // 2. OR, must be extremely close (overlapping body) to account for
+        // "inside" hits.
+        bool inFront =
+            (dx > 0 && is_facing_right) || (dx < 0 && !is_facing_right);
+        bool overlapping = dist < (hitW * 0.8f);
+
+        if (dist <= effectiveRange && (inFront || overlapping)) {
+          e->take_damage(dmg);
+          if (!e->is_alive())
+            this->heal(10);
+          attack_hit_enemies.push_back(e);
+        }
+      }
+    }
+  }
+  // --- OTHER ANIMATIONS ---
+  else if (is_jumping) {
+    jump_anim.frame_counter++;
+    if (jump_anim.frame_counter >= (60 / FRAME_RATE)) {
+      jump_anim.frame_counter = 0;
+      if (jump_anim.curr_frame < jump_anim.total_frame - 1)
+        jump_anim.curr_frame++;
+      jump_anim.frame_rec.x =
+          (float)jump_anim.curr_frame * jump_anim.frame_width;
+    }
+  } else if (current_state == STATE_RUN) {
+    int run_anim_rate = is_dashing ? (FRAME_RATE * 3) : FRAME_RATE;
+    run_anim.frame_counter++;
+    if (run_anim.frame_counter >= (60 / run_anim_rate)) {
+      run_anim.frame_counter = 0;
+      run_anim.curr_frame = (run_anim.curr_frame + 1) % run_anim.total_frame;
+      run_anim.frame_rec.x = (float)run_anim.curr_frame * run_anim.frame_width;
+    }
+  } else // IDLE
+  {
+    idle_anim.frame_counter++;
+    if (idle_anim.frame_counter >= (60 / FRAME_RATE)) {
+      idle_anim.frame_counter = 0;
+      idle_anim.curr_frame = (idle_anim.curr_frame + 1) % idle_anim.total_frame;
+      idle_anim.frame_rec.x =
+          (float)idle_anim.curr_frame * idle_anim.frame_width;
+    }
+  }
+
+  process_state();
 }
