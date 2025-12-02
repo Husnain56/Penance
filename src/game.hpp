@@ -32,7 +32,6 @@ class Game
 	GameState previousState;
 	std::vector<Enemy *> enemies;
 	std::string storedDialogueFile;
-
 	int counter;
 
 	void init_enemies();

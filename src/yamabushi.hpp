@@ -7,8 +7,8 @@ class Yamabushi : public ShortRangeEnemy
 	Yamabushi(Vector2 pos) : ShortRangeEnemy(pos)
 	{
 		set_scale(1.0f);
-		this->set_attack_damage(10);
-		this->set_chase_speed(1.5f);
+		this->attack_damage = 10;
+		this->chase_speed = 1.5f;
 		this->draw_offset = {0.0f, 5.0f};
 	}
 	void init() override

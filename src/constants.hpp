@@ -23,6 +23,6 @@ namespace GameConstants
 	constexpr float ENEMY_ATTACK_RANGE = 64.0f;	  // melee range for enemy
 
 	// Separate frame rates for attack animations (higher => faster)
-	constexpr int PLAYER_ATTACK_FRAME_RATE = 15;
+	constexpr int PLAYER_ATTACK_FRAME_RATE = 12;
 	constexpr int ENEMY_ATTACK_FRAME_RATE = 8;
 }; // namespace GameConstants
