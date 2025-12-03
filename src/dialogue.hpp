@@ -1,5 +1,6 @@
 #pragma once
 
+#include <constants.hpp>
 #include <fstream>
 #include <list>
 #include <map>
@@ -8,6 +9,7 @@
 #include <sstream>
 #include <string>
 using namespace std;
+using namespace GameConstants;
 using namespace Resources::MenuResource;
 using namespace Resources::FontResource;
 using namespace Resources::AvatarResource;
@@ -548,6 +550,11 @@ class DialogueBox
 				DrawTextEx(font, "Press ENTER to skip", {1100, 980}, FONT_SIZE - 10, 2, DARKGRAY);
 			}
 		}
+		// Draw dialogue box on top
+		const char *hint = "Press S to skip dialogue.";
+		float hintSize = 30;
+		Vector2 hintDim = MeasureTextEx(font, hint, hintSize, 2);
+		DrawTextEx(font, hint, {(SCREEN_WIDTH - hintDim.x) / 2, 150}, hintSize, 2, LIGHTGRAY);
 	}
 
 	// ===== GETTERS =====

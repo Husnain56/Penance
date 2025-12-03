@@ -1,3 +1,5 @@
+#include "raylib.h"
+#include "types.hpp"
 #include <game.hpp>
 
 using namespace Resources;
@@ -71,6 +73,10 @@ Game::~Game()
 void Game::update()
 {
 	UpdateMusicStream(backgroundMusic);
+
+	if (currentState == DIALOGUE && IsKeyPressed(KEY_S))
+		currentState = GAMEPLAY;
+
 	switch (currentState)
 	{
 		case MAIN_MENU:
@@ -440,6 +446,11 @@ void Game::draw_dialogue()
 	}
 
 	// Draw dialogue box on top
+	const char *hint = "Press S to skip dialogue.";
+	float hintSize = 30;
+	Vector2 hintDim = MeasureTextEx(font, hint, hintSize, 2);
+	DrawTextEx(font, hint, {(SCREEN_WIDTH - hintDim.x) / 2, 150}, hintSize, 2, LIGHTGRAY);
+
 	dialogueBox.Draw();
 }
 
