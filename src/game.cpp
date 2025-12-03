@@ -248,7 +248,6 @@ void Game::update_gameplay()
 	// 1. Update Player (Inputs -> Physics -> Animation)
 	player.update(currentMap);
 
-
 	if (!player.is_alive())
 		counter++;
 
@@ -520,12 +519,18 @@ void Game::reset_game()
 	storedDialogueFile = "";
 	dialogueBox.Reset();
 
-	// Reset camera
+	// Reset camera - set sensible defaults and clamp target
+	camera = {0};
+	camera.zoom = 1.0f;
+	camera.offset = {(float)SCREEN_WIDTH * 0.38f, (float)SCREEN_HEIGHT * 0.75f};
 	camera.target = player.get_position();
+
+	// Clamp camera to map bounds using your helper (ensures valid x)
+	update_camera();
 
 	counter = 0;
 
-	// Reset states
+	// Reset states (gameplay)
 	previousState = MAIN_MENU;
 	currentState = GAMEPLAY;
 }
